@@ -113,8 +113,19 @@ if curl -sLf "$DOWNLOAD_URL" -o "${TMP_DIR}/${TARBALL_NAME}" 2>/dev/null || wget
     if [ -f "${TMP_DIR}/glance-tree" ]; then
         install -m 755 "${TMP_DIR}/glance-tree" "${BIN_DIR}/glance-tree"
     fi
+    # Ensure desktop entry and icon are present (download from main branch if missing from older release archive)
+    if [ ! -f "${TMP_DIR}/io.github.maycon.Glance.desktop" ]; then
+        curl -fsSL "https://raw.githubusercontent.com/${REPO}/main/data/io.github.maycon.Glance.desktop" -o "${TMP_DIR}/io.github.maycon.Glance.desktop" 2>/dev/null || true
+    fi
+    if [ ! -f "${TMP_DIR}/io.github.maycon.Glance.svg" ]; then
+        curl -fsSL "https://raw.githubusercontent.com/${REPO}/main/data/icons/hicolor/scalable/apps/io.github.maycon.Glance.svg" -o "${TMP_DIR}/io.github.maycon.Glance.svg" 2>/dev/null || true
+    fi
+
     if [ -f "${TMP_DIR}/io.github.maycon.Glance.desktop" ]; then
         install -m 644 "${TMP_DIR}/io.github.maycon.Glance.desktop" "${APP_DIR}/io.github.maycon.Glance.desktop"
+        sed -i "s|^Exec=.*|Exec=${BIN_DIR}/glance|" "${APP_DIR}/io.github.maycon.Glance.desktop" 2>/dev/null || true
+        sed -i "s|^Icon=.*|Icon=io.github.maycon.Glance|" "${APP_DIR}/io.github.maycon.Glance.desktop" 2>/dev/null || true
+        sed -i "s|^StartupWMClass=.*|StartupWMClass=io.github.maycon.Glance|" "${APP_DIR}/io.github.maycon.Glance.desktop" 2>/dev/null || true
     fi
     if [ -f "${TMP_DIR}/io.github.maycon.Glance.svg" ]; then
         install -m 644 "${TMP_DIR}/io.github.maycon.Glance.svg" "${ICON_DIR}/io.github.maycon.Glance.svg"
@@ -132,6 +143,9 @@ else
         install -m 755 "${TMP_DIR}/repo/target/release/glance" "${BIN_DIR}/glance"
         install -m 755 "${TMP_DIR}/repo/target/release/glance-tree" "${BIN_DIR}/glance-tree"
         install -m 644 "${TMP_DIR}/repo/data/io.github.maycon.Glance.desktop" "${APP_DIR}/io.github.maycon.Glance.desktop"
+        sed -i "s|^Exec=.*|Exec=${BIN_DIR}/glance|" "${APP_DIR}/io.github.maycon.Glance.desktop" 2>/dev/null || true
+        sed -i "s|^Icon=.*|Icon=io.github.maycon.Glance|" "${APP_DIR}/io.github.maycon.Glance.desktop" 2>/dev/null || true
+        sed -i "s|^StartupWMClass=.*|StartupWMClass=io.github.maycon.Glance|" "${APP_DIR}/io.github.maycon.Glance.desktop" 2>/dev/null || true
         if [ -f "${TMP_DIR}/repo/data/icons/hicolor/scalable/apps/io.github.maycon.Glance.svg" ]; then
             install -m 644 "${TMP_DIR}/repo/data/icons/hicolor/scalable/apps/io.github.maycon.Glance.svg" "${ICON_DIR}/io.github.maycon.Glance.svg"
             cp -f "${ICON_DIR}/io.github.maycon.Glance.svg" "${ICON_DIR}/glance.svg"
@@ -149,17 +163,22 @@ if command -v gtk-update-icon-cache >/dev/null 2>&1; then
     gtk-update-icon-cache -q -f -t "${ICON_DIR%/*/*}" >/dev/null 2>&1 || true
 fi
 
-success "Glance successfully installed to ${BIN_DIR}/glance"
+success "Glance successfully installed!"
+printf "\n${GREEN}==>${NC} ${BOLD}Launch from your Desktop:${NC}\n"
+printf "  • Press ${BOLD}Super${NC} (Windows key) and type ${BOLD}Glance${NC} to launch\n"
+printf "  • Or click Glance in your application menu / dock\n"
+printf "  • Right-click the Glance dock icon to ${BOLD}Pin to Dash / Add to Favorites${NC}\n"
 
 case ":$PATH:" in
     *":${BIN_DIR}:"*)
         ;;
     *)
-        printf "\n${BLUE}Note:${NC} ${BIN_DIR} is not in your PATH.\n"
-        printf "Add it by running:\n"
+        printf "\n${BLUE}Note:${NC} ${BIN_DIR} is not in your terminal PATH.\n"
+        printf "To also run from terminal, add it to your ~/.bashrc or ~/.zshrc:\n"
         printf "  export PATH=\"%s:\$PATH\"\n" "$BIN_DIR"
-        printf "Or add the line above to your ~/.bashrc or ~/.zshrc\n\n"
         ;;
 esac
 
-printf "Run ${BOLD}glance${NC} to start the application, or ${BOLD}glance-tree${NC} for terminal view.\n"
+printf "\n${BLUE}==>${NC} Terminal launch (optional):\n"
+printf "  • Run ${BOLD}glance${NC}      (GUI monitor)\n"
+printf "  • Run ${BOLD}glance-tree${NC} (terminal tree view)\n\n"

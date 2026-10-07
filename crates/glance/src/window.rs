@@ -450,7 +450,7 @@ impl MainWindow {
                 .application_name("Glance")
                 .application_icon("io.github.maycon.Glance")
                 .developer_name("Maycon & Antigravity")
-                .version("0.1.0")
+                .version("0.1.1")
                 .comments("Lightweight high-performance Linux process & application monitor.")
                 .website("https://github.com/maycon/glance")
                 .issue_url("https://github.com/maycon/glance/issues")

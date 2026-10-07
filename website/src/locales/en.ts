@@ -17,7 +17,7 @@ export const en = {
   },
   intro: {
     name: 'Glance',
-    badge: 'v0.1.0',
+    badge: 'v0.1.1',
     title: 'Grouped process monitor for Linux',
     description:
       'A small, fast Linux utility that groups running processes by application with progressive disclosure. 0% idle CPU and ~65 MB RAM in the system tray.',
@@ -72,9 +72,12 @@ export const en = {
     tabDeb: 'Ubuntu / Debian',
     tabAur: 'Arch Linux',
     tabCargo: 'Cargo',
+    desktopTipTitle: 'Native Desktop Launcher:',
+    desktopTipText:
+      'Once installed, Glance appears in your application menu and dock. Search for "Glance" with Super key or pin it to your dock—no terminal needed.',
     cliHintTitle: 'CLI Companion:',
     cliHintText:
-      'Glance includes glance-tree for terminal power users. Run glance-tree -c for an expanded process tree in your terminal.',
+      'Glance also includes glance-tree for terminal power users. Run glance-tree -c for an expanded process tree in your terminal.',
   },
   author: {
     title: 'About the creator',

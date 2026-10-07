@@ -995,7 +995,7 @@ export function GlanceInteractiveDemo() {
                 className="mx-auto h-12 w-12 object-contain drop-shadow-xs"
               />
               <h3 className="mt-3 text-[15px] font-semibold text-[#f0f0f0]">Glance</h3>
-              <span className="text-[11px] font-ibm-mono text-[#a1a1aa]">v0.1.0</span>
+              <span className="text-[11px] font-ibm-mono text-[#a1a1aa]">v0.1.1</span>
               <p className="mt-2 text-[12px] text-[#a1a1aa] leading-relaxed">
                 Grouped process monitor for Linux. Progressive disclosure and true zero idle CPU.
               </p>

@@ -22,7 +22,7 @@ function MainContent() {
     },
     deb: {
       label: t('install.tabDeb'),
-      cmd: 'curl -LO https://github.com/maycondouglascc/glance/releases/latest/download/glance_0.1.0_amd64.deb && sudo apt install ./glance_0.1.0_amd64.deb',
+      cmd: 'curl -LO https://github.com/maycondouglascc/glance/releases/latest/download/glance_0.1.1_amd64.deb && sudo apt install ./glance_0.1.1_amd64.deb',
       desc: 'Native package for Ubuntu 24.04+, Debian 13, Linux Mint, and derivatives.',
     },
     aur: {
@@ -69,22 +69,20 @@ function MainContent() {
               
               {/* SECTION 0: HERO & INTERACTIVE APP */}
               <TransitionChild index={0}>
-                <section className="flex flex-col gap-6">
+                <section className="flex flex-col gap-8">
                   {/* App Glyph & Version */}
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center ">
                       <img
                         src="./logo.svg"
                         alt="Glance"
-                        className="h-9 w-9 shrink-0 object-contain drop-shadow-xs"
+                        className="h-14 w-14 shrink-0 object-contain drop-shadow-xs"
                       />
-                      <div className="flex flex-col">
+                      <div className="flex flex-col mb-1">
                         <span className="text-body-15-medium font-medium text-zinc-900 dark:text-zinc-100">
                           {t('intro.name')}
                         </span>
-                        <span className="text-caption-12-regular text-zinc-500 dark:text-zinc-400">
-                          Linux Process Monitor
-                        </span>
+                       
                       </div>
                     </div>
 
@@ -201,6 +199,16 @@ function MainContent() {
                     </pre>
                   </div>
 
+                  {/* Desktop Launcher Tip */}
+                  <div className="rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900 shadow-xs">
+                    <p className="text-caption-13-regular text-zinc-600 dark:text-zinc-400">
+                      <strong className="font-medium text-zinc-900 dark:text-zinc-100">
+                        {t('install.desktopTipTitle')}{' '}
+                      </strong>
+                      {t('install.desktopTipText')}
+                    </p>
+                  </div>
+
                   {/* CLI Tip */}
                   <div className="rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900 shadow-xs">
                     <p className="text-caption-13-regular text-zinc-600 dark:text-zinc-400">
@@ -214,7 +222,34 @@ function MainContent() {
               </TransitionChild>
 
               {/* SECTION 3: ABOUT THE CREATOR */}
-              
+              <TransitionChild index={3}>
+                <section className="flex flex-col gap-4">
+                  <h2 className="text-body-15-medium font-medium text-zinc-900 dark:text-zinc-100">
+                    {t('author.title')}
+                  </h2>
+
+                  <div className="flex items-start gap-4">
+                    <img
+                      src="./profilepic.webp"
+                      alt="Maycon Douglas"
+                      className="h-14 w-14 rounded-full object-cover ring-1 ring-zinc-200 dark:ring-zinc-800 shrink-0"
+                    />
+                    <div className="flex flex-col gap-2">
+                      <p className="text-body-14-regular text-zinc-600 dark:text-zinc-400">
+                        {t('author.bio')}
+                      </p>
+                      <a
+                        href="https://maycondouglas.work"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-body-14-medium font-medium text-accent hover:underline dark:text-accent"
+                      >
+                        {t('author.portfolioLink')}
+                      </a>
+                    </div>
+                  </div>
+                </section>
+              </TransitionChild>
 
             </main>
 

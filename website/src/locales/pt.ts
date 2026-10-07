@@ -17,7 +17,7 @@ export const pt = {
   },
   intro: {
     name: 'Glance',
-    badge: 'v0.1.0',
+    badge: 'v0.1.1',
     title: 'Monitor de processos agrupados para Linux.',
     description:
       'Um utilitário rápido e enxuto para Linux que agrupa processos em execução por aplicativo com progressive disclosure. 0% de CPU ociosa e ~65 MB de RAM no tray.',
@@ -72,9 +72,12 @@ export const pt = {
     tabDeb: 'Ubuntu / Debian',
     tabAur: 'Arch Linux',
     tabCargo: 'Cargo',
+    desktopTipTitle: 'Atalho no Desktop e Dock:',
+    desktopTipText:
+      'Uma vez instalado, o Glance aparece no seu menu de aplicativos e no dock. Pesquise por "Glance" com a tecla Super ou fixe-o no dock — sem precisar abrir o terminal.',
     cliHintTitle: 'Terminal Companion:',
     cliHintText:
-      'O Glance inclui o glance-tree para quem prefere a linha de comando. Execute glance-tree -c para visualizar a árvore expandida no terminal.',
+      'O Glance também inclui o glance-tree para quem prefere a linha de comando. Execute glance-tree -c para visualizar a árvore expandida no terminal.',
   },
   author: {
     title: 'Sobre o criador',
