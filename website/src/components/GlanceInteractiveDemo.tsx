@@ -1,11 +1,9 @@
 import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
-import { useLanguage } from '../context/LanguageContext'
 
 interface SubProcess {
   pid: number
   name: string
-  role: string
   cmdline: string
   exe: string
   cpu: number
@@ -19,13 +17,14 @@ interface SubProcess {
 interface AppGroup {
   id: string
   name: string
-  iconType: 'firefox' | 'vscode' | 'spotify' | 'terminal'
+  iconSrc: string
   processes: SubProcess[]
 }
 
 interface FlatProcess {
   pid: number
   name: string
+  iconSrc?: string
   cmdline: string
   exe: string
   cpu: number
@@ -40,15 +39,14 @@ const INITIAL_APPS: AppGroup[] = [
   {
     id: 'firefox',
     name: 'Firefox',
-    iconType: 'firefox',
+    iconSrc: './icons/firefox.svg',
     processes: [
       {
         pid: 19220,
-        name: 'firefox',
-        role: 'Main UI Process',
+        name: 'Firefox',
         cmdline: '/usr/lib/firefox/firefox --new-window',
         exe: '/usr/lib/firefox/firefox',
-        cpu: 0.8,
+        cpu: 1.2,
         memMb: 340,
         pssMb: 290,
         threads: 64,
@@ -56,54 +54,26 @@ const INITIAL_APPS: AppGroup[] = [
         state: 'Running (R)',
       },
       {
-        pid: 19285,
-        name: 'Web Content',
-        role: 'Tab: GitHub · glance',
+        pid: 19221,
+        name: 'Firefox',
         cmdline: '/usr/lib/firefox/firefox -contentproc -childID 1',
         exe: '/usr/lib/firefox/firefox',
-        cpu: 1.9,
-        memMb: 410,
+        cpu: 1.8,
+        memMb: 420,
         pssMb: 380,
-        threads: 28,
+        threads: 32,
         uid: 1000,
         state: 'Sleeping (S)',
       },
       {
-        pid: 19310,
-        name: 'Web Content',
-        role: 'Tab: Rust Documentation',
+        pid: 19222,
+        name: 'Firefox',
         cmdline: '/usr/lib/firefox/firefox -contentproc -childID 2',
         exe: '/usr/lib/firefox/firefox',
-        cpu: 0.9,
-        memMb: 270,
-        pssMb: 240,
-        threads: 24,
-        uid: 1000,
-        state: 'Sleeping (S)',
-      },
-      {
-        pid: 19342,
-        name: 'RDD Process',
-        role: 'Media Decoder',
-        cmdline: '/usr/lib/firefox/firefox -contentproc -rdd',
-        exe: '/usr/lib/firefox/firefox',
-        cpu: 0.4,
-        memMb: 110,
-        pssMb: 95,
-        threads: 16,
-        uid: 1000,
-        state: 'Sleeping (S)',
-      },
-      {
-        pid: 19355,
-        name: 'Socket Process',
-        role: 'Network I/O',
-        cmdline: '/usr/lib/firefox/firefox -contentproc -socket',
-        exe: '/usr/lib/firefox/firefox',
-        cpu: 0.2,
-        memMb: 50,
-        pssMb: 42,
-        threads: 12,
+        cpu: 1.2,
+        memMb: 380,
+        pssMb: 340,
+        threads: 28,
         uid: 1000,
         state: 'Sleeping (S)',
       },
@@ -112,12 +82,11 @@ const INITIAL_APPS: AppGroup[] = [
   {
     id: 'vscode',
     name: 'Visual Studio Code',
-    iconType: 'vscode',
+    iconSrc: './icons/vscode.svg',
     processes: [
       {
         pid: 24102,
         name: 'code',
-        role: 'Main Window (Electron)',
         cmdline: '/usr/share/code/code . --unity-launch',
         exe: '/usr/share/code/code',
         cpu: 0.9,
@@ -130,7 +99,6 @@ const INITIAL_APPS: AppGroup[] = [
       {
         pid: 24150,
         name: 'extension-host',
-        role: 'Rust Analyzer Daemon',
         cmdline: '/usr/share/code/code --type=extensionHost --pid=24102',
         exe: '/usr/share/code/code',
         cpu: 1.4,
@@ -143,7 +111,6 @@ const INITIAL_APPS: AppGroup[] = [
       {
         pid: 24205,
         name: 'pty-host',
-        role: 'Integrated Terminal PTY',
         cmdline: '/usr/share/code/code --type=ptyHost',
         exe: '/usr/share/code/code',
         cpu: 0.5,
@@ -158,12 +125,11 @@ const INITIAL_APPS: AppGroup[] = [
   {
     id: 'spotify',
     name: 'Spotify',
-    iconType: 'spotify',
+    iconSrc: './icons/spotify.svg',
     processes: [
       {
         pid: 14201,
         name: 'spotify',
-        role: 'Client Interface',
         cmdline: '/opt/spotify/spotify',
         exe: '/opt/spotify/spotify',
         cpu: 0.3,
@@ -176,7 +142,6 @@ const INITIAL_APPS: AppGroup[] = [
       {
         pid: 14210,
         name: 'spotify-audio',
-        role: 'Audio Engine & Decoder',
         cmdline: '/opt/spotify/spotify --audio-worker',
         exe: '/opt/spotify/spotify',
         cpu: 0.4,
@@ -189,14 +154,13 @@ const INITIAL_APPS: AppGroup[] = [
     ],
   },
   {
-    id: 'terminal',
-    name: 'Terminal',
-    iconType: 'terminal',
+    id: 'alacritty',
+    name: 'Alacritty',
+    iconSrc: './icons/alacritty.svg',
     processes: [
       {
         pid: 8812,
         name: 'alacritty',
-        role: 'Terminal Window',
         cmdline: '/usr/bin/alacritty',
         exe: '/usr/bin/alacritty',
         cpu: 0.1,
@@ -209,7 +173,6 @@ const INITIAL_APPS: AppGroup[] = [
       {
         pid: 8820,
         name: 'zsh',
-        role: 'Shell Session (glance-tree)',
         cmdline: '/bin/zsh -i',
         exe: '/bin/zsh',
         cpu: 0.1,
@@ -227,6 +190,7 @@ const INITIAL_BG_PROCESSES: FlatProcess[] = [
   {
     pid: 1280,
     name: 'dockerd',
+    iconSrc: './icons/docker.svg',
     cmdline: '/usr/bin/dockerd -H fd://',
     exe: '/usr/bin/dockerd',
     cpu: 0.3,
@@ -238,7 +202,8 @@ const INITIAL_BG_PROCESSES: FlatProcess[] = [
   },
   {
     pid: 3410,
-    name: '1password-helper',
+    name: '1password',
+    iconSrc: './icons/1password.svg',
     cmdline: '/opt/1Password/1password --silent',
     exe: '/opt/1Password/1password',
     cpu: 0.1,
@@ -251,6 +216,7 @@ const INITIAL_BG_PROCESSES: FlatProcess[] = [
   {
     pid: 912,
     name: 'tailscaled',
+    iconSrc: './icons/tailscale.svg',
     cmdline: '/usr/sbin/tailscaled --state=/var/lib/tailscale/tailscaled.state',
     exe: '/usr/sbin/tailscaled',
     cpu: 0.0,
@@ -266,6 +232,7 @@ const INITIAL_SYS_PROCESSES: FlatProcess[] = [
   {
     pid: 410,
     name: 'systemd-journald',
+    iconSrc: './icons/linux.svg',
     cmdline: '/usr/lib/systemd/systemd-journald',
     exe: '/usr/lib/systemd/systemd-journald',
     cpu: 0.0,
@@ -277,59 +244,32 @@ const INITIAL_SYS_PROCESSES: FlatProcess[] = [
   },
   {
     pid: 1120,
-    name: 'pipewire-pulse',
-    cmdline: '/usr/bin/pipewire-pulse',
-    exe: '/usr/bin/pipewire-pulse',
-    cpu: 0.2,
-    memMb: 28,
-    pssMb: 24,
-    threads: 2,
+    name: 'gnome-shell',
+    iconSrc: './icons/gnome.svg',
+    cmdline: '/usr/bin/gnome-shell',
+    exe: '/usr/bin/gnome-shell',
+    cpu: 1.1,
+    memMb: 210,
+    pssMb: 180,
+    threads: 16,
     uid: 1000,
     state: 'Running (R)',
   },
 ]
 
-function AppIcon({ type }: { type: AppGroup['iconType'] }) {
-  switch (type) {
-    case 'firefox':
-      return (
-        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-gradient-to-tr from-amber-500 via-orange-500 to-red-500 text-[10px] shadow-xs">
-          🦊
-        </span>
-      )
-    case 'vscode':
-      return (
-        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-sky-600 text-[10px] text-white shadow-xs">
-          💻
-        </span>
-      )
-    case 'spotify':
-      return (
-        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-emerald-600 text-[10px] text-white shadow-xs">
-          🎵
-        </span>
-      )
-    case 'terminal':
-      return (
-        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-zinc-800 text-[10px] text-zinc-300 ring-1 ring-zinc-700">
-          $
-        </span>
-      )
-  }
-}
-
 export function GlanceInteractiveDemo() {
-  const { t } = useLanguage()
-
-  // State
   const [query, setQuery] = useState('')
   const [expandedApps, setExpandedApps] = useState<Set<string>>(new Set(['firefox']))
   const [expandBg, setExpandBg] = useState(false)
   const [expandSys, setExpandSys] = useState(false)
   const [killedPids, setKilledPids] = useState<Set<number>>(new Set())
   const [selectedProcess, setSelectedProcess] = useState<SubProcess | FlatProcess | null>(null)
+  const [sortBy, setSortBy] = useState<'cpu' | 'memory' | 'count' | 'name'>('cpu')
+  const [showSortMenu, setShowSortMenu] = useState(false)
+  const [showMainMenu, setShowMainMenu] = useState(false)
+  const [showAboutModal, setShowAboutModal] = useState(false)
+  const [isMinimized, setIsMinimized] = useState(false)
 
-  // Toggle app accordion
   const toggleApp = (id: string) => {
     setExpandedApps((prev) => {
       const next = new Set(prev)
@@ -339,7 +279,6 @@ export function GlanceInteractiveDemo() {
     })
   }
 
-  // Terminate a single PID
   const killProcess = (pid: number, e?: React.MouseEvent) => {
     e?.stopPropagation()
     setKilledPids((prev) => new Set(prev).add(pid))
@@ -348,7 +287,6 @@ export function GlanceInteractiveDemo() {
     }
   }
 
-  // Terminate an entire application
   const killApp = (app: AppGroup, e: React.MouseEvent) => {
     e.stopPropagation()
     setKilledPids((prev) => {
@@ -358,7 +296,6 @@ export function GlanceInteractiveDemo() {
     })
   }
 
-  // Reset demo
   const resetDemo = () => {
     setKilledPids(new Set())
     setExpandedApps(new Set(['firefox']))
@@ -366,17 +303,15 @@ export function GlanceInteractiveDemo() {
     setSelectedProcess(null)
   }
 
-  // Filtered live data
   const q = query.trim().toLowerCase()
 
   const liveApps = useMemo(() => {
-    return INITIAL_APPS.map((app) => {
+    const list = INITIAL_APPS.map((app) => {
       const aliveProcs = app.processes.filter((p) => !killedPids.has(p.pid))
       const matchingProcs = q
         ? aliveProcs.filter(
             (p) =>
               p.name.toLowerCase().includes(q) ||
-              p.role.toLowerCase().includes(q) ||
               p.cmdline.toLowerCase().includes(q) ||
               String(p.pid).includes(q) ||
               app.name.toLowerCase().includes(q)
@@ -395,7 +330,17 @@ export function GlanceInteractiveDemo() {
         isVisible: matchingProcs.length > 0,
       }
     }).filter((app) => app.isVisible)
-  }, [killedPids, q])
+
+    list.sort((a, b) => {
+      if (sortBy === 'cpu') return b.totalCpu - a.totalCpu
+      if (sortBy === 'memory') return b.totalMemMb - a.totalMemMb
+      if (sortBy === 'count') return b.matchingProcs.length - a.matchingProcs.length
+      if (sortBy === 'name') return a.name.localeCompare(b.name)
+      return 0
+    })
+
+    return list
+  }, [killedPids, q, sortBy])
 
   const liveBg = useMemo(() => {
     const alive = INITIAL_BG_PROCESSES.filter((p) => !killedPids.has(p.pid))
@@ -419,7 +364,6 @@ export function GlanceInteractiveDemo() {
     )
   }, [killedPids, q])
 
-  // Total summary calculations
   const totalStats = useMemo(() => {
     let cpu = 0
     let memMb = 0
@@ -444,34 +388,80 @@ export function GlanceInteractiveDemo() {
     })
 
     return {
-      cpu: cpu.toFixed(1),
-      ram: (memMb / 1024).toFixed(2),
-      procs: count,
+      cpu: (cpu + 7.5).toFixed(1), // system base cpu
+      ram: ((memMb + 1400) / 1024).toFixed(1),
+      procs: count + 140, // realistic system totals
     }
   }, [liveApps, liveBg, liveSys])
 
   const hasKilled = killedPids.size > 0
 
   return (
-    <div className="relative mt-2 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-950 font-sans shadow-lg dark:border-zinc-800">
+    <div className="relative mx-auto w-full max-w-[442px] select-none overflow-hidden rounded-[24px] bg-[#18181b] font-ibm-sans text-[#f0f0f0] shadow-2xl ring-1 ring-white/5">
       
-      {/* Adwaita Header Bar */}
-      <div className="flex items-center gap-2 border-b border-zinc-800/80 bg-zinc-900/95 px-3 py-2.5">
-        <button
-          type="button"
-          className="flex h-7 w-7 items-center justify-center rounded text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-zinc-200"
-          title="Filter sort"
-          aria-label="Filter sort"
-        >
-          <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M3 4h18M3 10h12M3 16h6" />
-          </svg>
-        </button>
+      {/* 1:1 GTK Headerbar (32px height, flat transparent) */}
+      <div className="flex items-center justify-between px-2.5 pt-2.5 pb-1.5">
+        
+        {/* Sort Menu Button (32x32 circular #202026) */}
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => {
+              setShowSortMenu((prev) => !prev)
+              setShowMainMenu(false)
+            }}
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#202026] text-[#a1a1aa] transition-colors hover:bg-[#2c2c34] hover:text-[#f0f0f0]"
+            title="Sort order"
+            aria-label="Sort order"
+          >
+            {/* Exact GTK sort icon */}
+            <svg className="h-4 w-4" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M2 3.5h7v1H2zm0 4h5v1H2zm0 4h3v1H2zm10.5-8.5l2.5 3h-2v9h-1v-9h-2z" />
+            </svg>
+          </button>
 
-        {/* Search Bar */}
-        <div className="relative flex flex-1 items-center">
+          {showSortMenu && (
+            <div className="absolute left-0 top-10 z-30 w-48 rounded-xl border border-[#2c2c34] bg-[#202026] p-1.5 shadow-2xl text-[12px] font-ibm-sans">
+              <button
+                type="button"
+                onClick={() => { setSortBy('cpu'); setShowSortMenu(false); }}
+                className={`flex w-full items-center justify-between rounded-lg px-2.5 py-1.5 text-left transition-colors ${sortBy === 'cpu' ? 'bg-[#2c2c34] text-white font-medium' : 'text-[#a1a1aa] hover:bg-white/[0.04] hover:text-[#f0f0f0]'}`}
+              >
+                <span>Sort by CPU</span>
+                {sortBy === 'cpu' && <span className="text-xs">✓</span>}
+              </button>
+              <button
+                type="button"
+                onClick={() => { setSortBy('memory'); setShowSortMenu(false); }}
+                className={`flex w-full items-center justify-between rounded-lg px-2.5 py-1.5 text-left transition-colors ${sortBy === 'memory' ? 'bg-[#2c2c34] text-white font-medium' : 'text-[#a1a1aa] hover:bg-white/[0.04] hover:text-[#f0f0f0]'}`}
+              >
+                <span>Sort by Memory</span>
+                {sortBy === 'memory' && <span className="text-xs">✓</span>}
+              </button>
+              <button
+                type="button"
+                onClick={() => { setSortBy('count'); setShowSortMenu(false); }}
+                className={`flex w-full items-center justify-between rounded-lg px-2.5 py-1.5 text-left transition-colors ${sortBy === 'count' ? 'bg-[#2c2c34] text-white font-medium' : 'text-[#a1a1aa] hover:bg-white/[0.04] hover:text-[#f0f0f0]'}`}
+              >
+                <span>Sort by Process Count</span>
+                {sortBy === 'count' && <span className="text-xs">✓</span>}
+              </button>
+              <button
+                type="button"
+                onClick={() => { setSortBy('name'); setShowSortMenu(false); }}
+                className={`flex w-full items-center justify-between rounded-lg px-2.5 py-1.5 text-left transition-colors ${sortBy === 'name' ? 'bg-[#2c2c34] text-white font-medium' : 'text-[#a1a1aa] hover:bg-white/[0.04] hover:text-[#f0f0f0]'}`}
+              >
+                <span>Sort by Name</span>
+                {sortBy === 'name' && <span className="text-xs">✓</span>}
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Center Search Entry (260x32, #202026, 12px) */}
+        <div className="relative mx-2 flex h-8 flex-1 max-w-[260px] items-center">
           <svg
-            className="pointer-events-none absolute left-2.5 h-3.5 w-3.5 text-zinc-500"
+            className="pointer-events-none absolute left-2.5 h-4 w-4 text-[#a1a1aa]"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -484,169 +474,254 @@ export function GlanceInteractiveDemo() {
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder={t('demo.searchPlaceholder')}
-            className="w-full rounded-md border border-zinc-800 bg-zinc-950 py-1 pl-8 pr-7 font-mono text-caption-12-regular text-zinc-200 placeholder:text-zinc-500 focus:border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-600"
+            placeholder="Search apps or PID…"
+            className="h-8 w-full rounded-full border-none bg-[#202026] pl-8 pr-7 text-[12px] text-[#f0f0f0] placeholder-[#8e8e8e] outline-none focus:ring-1 focus:ring-white/20"
           />
           {query && (
             <button
               type="button"
               onClick={() => setQuery('')}
-              className="absolute right-2 text-zinc-400 hover:text-zinc-200 text-xs"
-              title="Clear search"
+              className="absolute right-2.5 text-xs text-[#a1a1aa] hover:text-[#f0f0f0]"
             >
               ✕
             </button>
           )}
         </div>
 
-        {hasKilled && (
+        {/* Right actions: 3-dots Menu + Close Window Button */}
+        <div className="flex items-center gap-1.5">
+          {hasKilled && (
+            <button
+              type="button"
+              onClick={resetDemo}
+              className="h-6 rounded-full bg-[#202026] px-2 text-[10px] font-medium text-[#a1a1aa] hover:bg-[#2c2c34] hover:text-[#f0f0f0]"
+              title="Reset processes"
+            >
+              Reset
+            </button>
+          )}
+          
+          {/* Main 3-dots Menu */}
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => {
+                setShowMainMenu((prev) => !prev)
+                setShowSortMenu(false)
+              }}
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#202026] text-[#a1a1aa] transition-colors hover:bg-[#2c2c34] hover:text-[#f0f0f0]"
+              title="Main menu"
+              aria-label="Main menu"
+            >
+              <svg className="h-4 w-4" viewBox="0 0 16 16" fill="currentColor">
+                <circle cx="8" cy="3.5" r="1.5" />
+                <circle cx="8" cy="8" r="1.5" />
+                <circle cx="8" cy="12.5" r="1.5" />
+              </svg>
+            </button>
+
+            {showMainMenu && (
+              <div className="absolute right-0 top-10 z-30 w-44 rounded-xl border border-[#2c2c34] bg-[#202026] p-1.5 shadow-2xl text-[12px] font-ibm-sans">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowAboutModal(true)
+                    setShowMainMenu(false)
+                  }}
+                  className="flex w-full items-center rounded-lg px-2.5 py-1.5 text-left text-[#a1a1aa] transition-colors hover:bg-white/[0.04] hover:text-[#f0f0f0]"
+                >
+                  About Glance
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    resetDemo()
+                    setShowMainMenu(false)
+                  }}
+                  className="flex w-full items-center rounded-lg px-2.5 py-1.5 text-left text-[#a1a1aa] transition-colors hover:bg-white/[0.04] hover:text-[#f0f0f0]"
+                >
+                  Reset Processes
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsMinimized(true)
+                    setShowMainMenu(false)
+                  }}
+                  className="flex w-full items-center rounded-lg px-2.5 py-1.5 text-left text-[#a1a1aa] transition-colors hover:bg-white/[0.04] hover:text-[#f0f0f0]"
+                >
+                  Minimize to Tray
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Close / Minimize Button */}
           <button
             type="button"
-            onClick={resetDemo}
-            className="rounded bg-zinc-800 px-2 py-1 text-caption-11-regular font-medium text-zinc-300 transition-colors hover:bg-zinc-700 hover:text-zinc-100"
-            title={t('demo.reset')}
+            onClick={() => setIsMinimized(true)}
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#202026] text-[#a1a1aa] transition-colors hover:bg-[#2c2c34] hover:text-[#f0f0f0]"
+            title="Close Glance"
+            aria-label="Close Glance"
           >
-            {t('demo.reset')}
+            <svg className="h-3.5 w-3.5" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+            </svg>
           </button>
-        )}
-
-        <div className="flex items-center gap-1">
-          <span className="h-2.5 w-2.5 rounded-full bg-zinc-700" title="Menu" />
         </div>
       </div>
 
-      {/* Table Column Headers */}
-      <div className="grid grid-cols-[1fr_56px_68px_56px] items-center border-b border-zinc-900 bg-zinc-950/90 px-3.5 py-1.5 font-mono text-[10.5px] font-medium tracking-wider text-zinc-500 uppercase">
-        <span>{t('demo.colApp')}</span>
-        <span className="text-right">{t('demo.colCpu')}</span>
-        <span className="text-right">{t('demo.colRam')}</span>
-        <span className="text-right">ACT</span>
+      {/* 1:1 Sticky Column Header */}
+      <div className="flex items-center px-4 pt-1 pb-1.5 font-ibm-mono text-[10px] font-bold tracking-[1px] uppercase">
+        <span className="text-[#a1a1aa]">APPLICATION</span>
+        <div className="ml-auto flex items-center">
+          <span className="w-[36px] text-right text-[#787878]">CPU</span>
+          <span className="ml-[24px] w-[38px] text-right text-[#787878]">RAM</span>
+          <div className="w-[44px] ml-[16px]" />
+        </div>
       </div>
 
-      {/* Interactive Process List */}
-      <div className="max-h-[360px] overflow-y-auto px-1 py-1.5">
+      {/* Process Scrolled Container */}
+      <div className="max-h-[380px] overflow-y-auto px-3 pb-2 pt-0.5 scrollbar-thin">
         
-        {/* SECTION: APPLICATION */}
-        <div className="mb-1">
-          <div className="px-2.5 py-1 font-mono text-[10px] font-semibold tracking-wider text-zinc-500 uppercase">
-            {t('demo.secApp')}
-          </div>
-
-          <div className="flex flex-col gap-0.5">
-            {liveApps.map((app) => {
-              const isExpanded = expandedApps.has(app.id) || Boolean(q)
-              return (
-                <div key={app.id} className="rounded-md transition-colors hover:bg-zinc-900/60">
-                  {/* Parent Row */}
-                  <div
-                    onClick={() => toggleApp(app.id)}
-                    className="grid grid-cols-[1fr_56px_68px_56px] items-center cursor-pointer select-none px-2.5 py-1.5 transition-colors"
+        {/* APPLICATION Group */}
+        <div className="flex flex-col gap-0.5">
+          {liveApps.map((app) => {
+            const isExpanded = expandedApps.has(app.id) || Boolean(q)
+            return (
+              <div key={app.id} className="app-group-card">
+                
+                {/* Application Header Row */}
+                <div
+                  onClick={() => toggleApp(app.id)}
+                  className="flex h-7 cursor-pointer items-center rounded-md px-1 transition-colors hover:bg-white/[0.04]"
+                >
+                  {/* Chevron button */}
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      toggleApp(app.id)
+                    }}
+                    className="flex h-5 w-5 shrink-0 items-center justify-center text-[#a1a1aa] hover:text-[#f0f0f0]"
                   >
-                    <div className="flex items-center gap-2 overflow-hidden pr-2">
-                      <span className="text-zinc-500 transition-transform text-[11px]">
-                        {isExpanded ? '▾' : '▸'}
-                      </span>
-                      <AppIcon type={app.iconType} />
-                      <span className="truncate text-caption-13-medium font-medium text-zinc-200">
-                        {app.name}
-                      </span>
-                      <span className="rounded bg-zinc-800/80 px-1.5 py-0.2 font-mono text-[10.5px] text-zinc-400">
-                        {t('demo.procs', { count: app.aliveCount })}
-                      </span>
-                    </div>
+                    <span className="text-[10px]">{isExpanded ? '▾' : '▸'}</span>
+                  </button>
 
-                    <span className="font-mono text-caption-12-regular text-right text-zinc-300">
+                  {/* Official SVG Logo */}
+                  <img
+                    src={app.iconSrc}
+                    alt={app.name}
+                    className="h-5 w-5 shrink-0 object-contain ml-1"
+                    loading="lazy"
+                  />
+
+                  {/* App Title */}
+                  <span className="ml-1.5 truncate text-[12px] font-semibold text-[#f0f0f0]">
+                    {app.name}
+                  </span>
+
+                  {/* Process count pill */}
+                  <span className="ml-2 rounded-[2px] bg-[#202026] px-2 py-0.5 text-[12px] font-medium tracking-[0.5px] text-[#9e9e9e]">
+                    {app.aliveCount} procs
+                  </span>
+
+                  {/* Right metrics */}
+                  <div className="ml-auto flex items-center">
+                    <span className="w-[36px] text-right font-ibm-mono text-[12px] font-semibold text-[#f0f0f0]">
                       {app.totalCpu.toFixed(1)}%
                     </span>
-
-                    <span className="font-mono text-caption-12-regular text-right text-zinc-300">
+                    <span className="ml-[24px] w-[38px] text-right font-ibm-mono text-[12px] font-semibold text-[#f0f0f0]">
                       {(app.totalMemMb / 1024).toFixed(1)} GB
                     </span>
 
-                    <div className="flex justify-end">
+                    {/* App Terminate Button */}
+                    <div className="ml-[16px] flex w-[44px] justify-end">
                       <button
                         type="button"
                         onClick={(e) => killApp(app, e)}
-                        className="flex h-5 w-5 items-center justify-center rounded text-zinc-500 hover:bg-zinc-800 hover:text-red-400"
-                        title={t('demo.terminate')}
+                        className="flex h-5 w-5 items-center justify-center rounded-full bg-[#202026] text-[#a1a1aa] transition-colors hover:bg-[#2c2c34] hover:text-[#f0f0f0]"
+                        title="End application"
                       >
-                        ✕
+                        <svg className="h-3 w-3" viewBox="0 0 16 16" fill="currentColor">
+                          <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+                        </svg>
                       </button>
                     </div>
                   </div>
+                </div>
 
-                  {/* Expanded Children Rows */}
-                  <AnimatePresence>
-                    {isExpanded && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.15 }}
-                        className="overflow-hidden pl-7 pr-1"
-                      >
-                        {app.matchingProcs.map((proc) => (
-                          <div
-                            key={proc.pid}
-                            className="grid grid-cols-[1fr_56px_68px_56px] items-center border-l border-zinc-800/80 py-1 pl-3 pr-2 text-zinc-400 transition-colors hover:bg-zinc-900/80"
-                          >
-                            <div className="flex items-center gap-1.5 overflow-hidden pr-2">
-                              <span className="truncate text-caption-12-regular text-zinc-300">
-                                {proc.name}
-                              </span>
-                              <span className="font-mono text-[10px] text-zinc-500">
-                                · {proc.pid}
-                              </span>
-                            </div>
+                {/* Progressive Disclosure Children */}
+                <AnimatePresence>
+                  {isExpanded && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.12 }}
+                      className="ml-[14px] mb-1 border-l-[1.5px] border-[#202026] pl-[10px]"
+                    >
+                      {app.matchingProcs.map((proc) => (
+                        <div
+                          key={proc.pid}
+                          className="flex h-[26px] items-center rounded-md px-1 transition-colors hover:bg-white/[0.04]"
+                        >
+                          <span className="truncate text-[12px] font-medium text-[#a1a1aa]">
+                            {proc.name}  ·  {proc.pid}
+                          </span>
 
-                            <span className="font-mono text-[11px] text-right text-zinc-400">
+                          <div className="ml-auto flex items-center">
+                            <span className="w-[36px] text-right font-ibm-mono text-[12px] font-medium text-[#a1a1aa]">
                               {proc.cpu.toFixed(1)}%
                             </span>
-
-                            <span className="font-mono text-[11px] text-right text-zinc-400">
-                              {proc.memMb} MB
+                            <span className="ml-[24px] w-[38px] text-right font-ibm-mono text-[12px] font-medium text-[#a1a1aa]">
+                              {(proc.memMb >= 1024 ? `${(proc.memMb / 1024).toFixed(1)} GB` : `${proc.memMb} MB`)}
                             </span>
 
-                            <div className="flex items-center justify-end gap-1">
+                            {/* Process Action Buttons: Info & Terminate */}
+                            <div className="ml-[16px] flex w-[44px] items-center justify-end gap-1">
                               <button
                                 type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  setSelectedProcess(proc)
-                                }}
-                                className="flex h-4.5 w-4.5 items-center justify-center rounded text-zinc-500 hover:bg-zinc-800 hover:text-zinc-200"
-                                title={t('demo.inspect')}
+                                onClick={() => setSelectedProcess(proc)}
+                                className="flex h-5 w-5 items-center justify-center rounded-full bg-[#202026] text-[#a1a1aa] transition-colors hover:bg-[#2c2c34] hover:text-[#f0f0f0]"
+                                title="Inspect process details"
                               >
-                                ⓘ
+                                <svg className="h-3 w-3" viewBox="0 0 16 16" fill="currentColor">
+                                  <circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" strokeWidth="1.5" />
+                                  <circle cx="8" cy="5" r="1" />
+                                  <path d="M7 7h1v4h1" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+                                </svg>
                               </button>
                               <button
                                 type="button"
                                 onClick={(e) => killProcess(proc.pid, e)}
-                                className="flex h-4.5 w-4.5 items-center justify-center rounded text-zinc-500 hover:bg-zinc-800 hover:text-red-400"
-                                title={t('demo.terminate')}
+                                className="flex h-5 w-5 items-center justify-center rounded-full bg-[#202026] text-[#a1a1aa] transition-colors hover:bg-[#2c2c34] hover:text-[#f0f0f0]"
+                                title="End process (SIGTERM)"
                               >
-                                ■
+                                <svg className="h-2.5 w-2.5" viewBox="0 0 16 16" fill="currentColor">
+                                  <rect x="3" y="3" width="10" height="10" rx="1.5" />
+                                </svg>
                               </button>
                             </div>
                           </div>
-                        ))}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              )
-            })}
-          </div>
+                        </div>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            )
+          })}
         </div>
 
-        {/* SECTION: BACKGROUND */}
-        <div className="mt-2 border-t border-zinc-900/80 pt-1.5">
+        {/* BACKGROUND Collapsible Section */}
+        <div className="mt-2.5">
           <div
             onClick={() => setExpandBg(!expandBg)}
-            className="flex cursor-pointer select-none items-center gap-1.5 px-2.5 py-1 font-mono text-[10px] font-semibold tracking-wider text-zinc-500 uppercase hover:text-zinc-400"
+            className="flex cursor-pointer items-center gap-1.5 px-1 py-1 font-ibm-mono text-[10px] font-bold tracking-[1px] text-[#a1a1aa] uppercase hover:text-[#f0f0f0]"
           >
             <span>{expandBg ? '▾' : '▸'}</span>
-            <span>{t('demo.secBg')} ({liveBg.length})</span>
+            <span>BACKGROUND</span>
           </div>
 
           <AnimatePresence>
@@ -655,43 +730,52 @@ export function GlanceInteractiveDemo() {
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.15 }}
-                className="overflow-hidden"
+                transition={{ duration: 0.12 }}
+                className="ml-[14px] mb-1 border-l-[1.5px] border-[#202026] pl-[10px]"
               >
                 {liveBg.map((proc) => (
                   <div
                     key={proc.pid}
-                    className="grid grid-cols-[1fr_56px_68px_56px] items-center px-3 py-1 text-zinc-400 hover:bg-zinc-900/60"
+                    className="flex h-[26px] items-center rounded-md px-1 transition-colors hover:bg-white/[0.04]"
                   >
                     <div className="flex items-center gap-1.5 truncate">
-                      <span className="truncate text-caption-12-regular text-zinc-300">
-                        {proc.name}
+                      {proc.iconSrc && (
+                        <img src={proc.iconSrc} alt={proc.name} className="h-4 w-4 shrink-0 object-contain" />
+                      )}
+                      <span className="truncate text-[12px] font-medium text-[#a1a1aa]">
+                        {proc.name}  ·  {proc.pid}
                       </span>
-                      <span className="font-mono text-[10px] text-zinc-500">· {proc.pid}</span>
                     </div>
-                    <span className="font-mono text-[11px] text-right text-zinc-400">
-                      {proc.cpu.toFixed(1)}%
-                    </span>
-                    <span className="font-mono text-[11px] text-right text-zinc-400">
-                      {proc.memMb} MB
-                    </span>
-                    <div className="flex items-center justify-end gap-1">
-                      <button
-                        type="button"
-                        onClick={() => setSelectedProcess(proc)}
-                        className="flex h-4.5 w-4.5 items-center justify-center rounded text-zinc-500 hover:bg-zinc-800 hover:text-zinc-200"
-                        title={t('demo.inspect')}
-                      >
-                        ⓘ
-                      </button>
-                      <button
-                        type="button"
-                        onClick={(e) => killProcess(proc.pid, e)}
-                        className="flex h-4.5 w-4.5 items-center justify-center rounded text-zinc-500 hover:bg-zinc-800 hover:text-red-400"
-                        title={t('demo.terminate')}
-                      >
-                        ■
-                      </button>
+
+                    <div className="ml-auto flex items-center">
+                      <span className="w-[36px] text-right font-ibm-mono text-[12px] font-medium text-[#a1a1aa]">
+                        {proc.cpu.toFixed(1)}%
+                      </span>
+                      <span className="ml-[24px] w-[38px] text-right font-ibm-mono text-[12px] font-medium text-[#a1a1aa]">
+                        {proc.memMb} MB
+                      </span>
+                      <div className="ml-[16px] flex w-[44px] items-center justify-end gap-1">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedProcess(proc)}
+                          className="flex h-5 w-5 items-center justify-center rounded-full bg-[#202026] text-[#a1a1aa] hover:bg-[#2c2c34] hover:text-[#f0f0f0]"
+                        >
+                          <svg className="h-3 w-3" viewBox="0 0 16 16" fill="currentColor">
+                            <circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" strokeWidth="1.5" />
+                            <circle cx="8" cy="5" r="1" />
+                            <path d="M7 7h1v4h1" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+                          </svg>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={(e) => killProcess(proc.pid, e)}
+                          className="flex h-5 w-5 items-center justify-center rounded-full bg-[#202026] text-[#a1a1aa] hover:bg-[#2c2c34] hover:text-[#f0f0f0]"
+                        >
+                          <svg className="h-2.5 w-2.5" viewBox="0 0 16 16" fill="currentColor">
+                            <rect x="3" y="3" width="10" height="10" rx="1.5" />
+                          </svg>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -700,14 +784,14 @@ export function GlanceInteractiveDemo() {
           </AnimatePresence>
         </div>
 
-        {/* SECTION: SYSTEM */}
-        <div className="mt-1 border-t border-zinc-900/80 pt-1.5">
+        {/* SYSTEM Collapsible Section */}
+        <div className="mt-1">
           <div
             onClick={() => setExpandSys(!expandSys)}
-            className="flex cursor-pointer select-none items-center gap-1.5 px-2.5 py-1 font-mono text-[10px] font-semibold tracking-wider text-zinc-500 uppercase hover:text-zinc-400"
+            className="flex cursor-pointer items-center gap-1.5 px-1 py-1 font-ibm-mono text-[10px] font-bold tracking-[1px] text-[#a1a1aa] uppercase hover:text-[#f0f0f0]"
           >
             <span>{expandSys ? '▾' : '▸'}</span>
-            <span>{t('demo.secSys')} ({liveSys.length})</span>
+            <span>SYSTEM</span>
           </div>
 
           <AnimatePresence>
@@ -716,43 +800,52 @@ export function GlanceInteractiveDemo() {
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.15 }}
-                className="overflow-hidden"
+                transition={{ duration: 0.12 }}
+                className="ml-[14px] mb-1 border-l-[1.5px] border-[#202026] pl-[10px]"
               >
                 {liveSys.map((proc) => (
                   <div
                     key={proc.pid}
-                    className="grid grid-cols-[1fr_56px_68px_56px] items-center px-3 py-1 text-zinc-400 hover:bg-zinc-900/60"
+                    className="flex h-[26px] items-center rounded-md px-1 transition-colors hover:bg-white/[0.04]"
                   >
                     <div className="flex items-center gap-1.5 truncate">
-                      <span className="truncate text-caption-12-regular text-zinc-300">
-                        {proc.name}
+                      {proc.iconSrc && (
+                        <img src={proc.iconSrc} alt={proc.name} className="h-4 w-4 shrink-0 object-contain" />
+                      )}
+                      <span className="truncate text-[12px] font-medium text-[#a1a1aa]">
+                        {proc.name}  ·  {proc.pid}
                       </span>
-                      <span className="font-mono text-[10px] text-zinc-500">· {proc.pid}</span>
                     </div>
-                    <span className="font-mono text-[11px] text-right text-zinc-400">
-                      {proc.cpu.toFixed(1)}%
-                    </span>
-                    <span className="font-mono text-[11px] text-right text-zinc-400">
-                      {proc.memMb} MB
-                    </span>
-                    <div className="flex items-center justify-end gap-1">
-                      <button
-                        type="button"
-                        onClick={() => setSelectedProcess(proc)}
-                        className="flex h-4.5 w-4.5 items-center justify-center rounded text-zinc-500 hover:bg-zinc-800 hover:text-zinc-200"
-                        title={t('demo.inspect')}
-                      >
-                        ⓘ
-                      </button>
-                      <button
-                        type="button"
-                        onClick={(e) => killProcess(proc.pid, e)}
-                        className="flex h-4.5 w-4.5 items-center justify-center rounded text-zinc-500 hover:bg-zinc-800 hover:text-red-400"
-                        title={t('demo.terminate')}
-                      >
-                        ■
-                      </button>
+
+                    <div className="ml-auto flex items-center">
+                      <span className="w-[36px] text-right font-ibm-mono text-[12px] font-medium text-[#a1a1aa]">
+                        {proc.cpu.toFixed(1)}%
+                      </span>
+                      <span className="ml-[24px] w-[38px] text-right font-ibm-mono text-[12px] font-medium text-[#a1a1aa]">
+                        {proc.memMb} MB
+                      </span>
+                      <div className="ml-[16px] flex w-[44px] items-center justify-end gap-1">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedProcess(proc)}
+                          className="flex h-5 w-5 items-center justify-center rounded-full bg-[#202026] text-[#a1a1aa] hover:bg-[#2c2c34] hover:text-[#f0f0f0]"
+                        >
+                          <svg className="h-3 w-3" viewBox="0 0 16 16" fill="currentColor">
+                            <circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" strokeWidth="1.5" />
+                            <circle cx="8" cy="5" r="1" />
+                            <path d="M7 7h1v4h1" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+                          </svg>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={(e) => killProcess(proc.pid, e)}
+                          className="flex h-5 w-5 items-center justify-center rounded-full bg-[#202026] text-[#a1a1aa] hover:bg-[#2c2c34] hover:text-[#f0f0f0]"
+                        >
+                          <svg className="h-2.5 w-2.5" viewBox="0 0 16 16" fill="currentColor">
+                            <rect x="3" y="3" width="10" height="10" rx="1.5" />
+                          </svg>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -763,25 +856,19 @@ export function GlanceInteractiveDemo() {
 
       </div>
 
-      {/* Adwaita Status Bar */}
-      <div className="flex items-center justify-between border-t border-zinc-900 bg-zinc-950 px-3.5 py-2 font-mono text-[11px] text-zinc-400">
-        <span className="flex items-center gap-1.5 text-zinc-500">
-          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-          <span>cgroup v2 · 1s</span>
-        </span>
-        <span className="text-zinc-300">
-          {t('demo.status', { cpu: totalStats.cpu, ram: totalStats.ram, procs: totalStats.procs })}
-        </span>
+      {/* 1:1 GTK Footer Status Bar (border-top 1px solid #202026, text-[#a1a1aa] 12px 500) */}
+      <div className="border-t border-[#202026] px-4 py-3.5 text-right font-ibm-mono text-[12px] font-medium text-[#a1a1aa]">
+        CPU {totalStats.cpu}%  ·  RAM {totalStats.ram} GB  ·  {totalStats.procs} processes
       </div>
 
-      {/* Inspection Modal (Process Details) */}
+      {/* Process Details Popover (matching Glance adw::Window inspection) */}
       <AnimatePresence>
         {selectedProcess && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 z-20 flex items-center justify-center bg-black/75 p-4 backdrop-blur-xs"
+            className="absolute inset-0 z-30 flex items-center justify-center bg-black/80 p-4 backdrop-blur-xs"
             onClick={() => setSelectedProcess(null)}
           >
             <motion.div
@@ -789,66 +876,64 @@ export function GlanceInteractiveDemo() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-[360px] rounded-xl border border-zinc-800 bg-zinc-900 p-4 shadow-2xl"
+              className="w-full max-w-[340px] rounded-[16px] border border-[#2c2c34] bg-[#18181b] p-4 text-[#f0f0f0] shadow-2xl"
             >
-              <div className="flex items-start justify-between border-b border-zinc-800 pb-3">
-                <div>
-                  <h4 className="text-body-14-medium font-medium text-zinc-100">
-                    {selectedProcess.name}
-                  </h4>
-                  <span className="font-mono text-caption-11-regular text-zinc-400">
-                    PID {selectedProcess.pid} · UID {selectedProcess.uid}
-                  </span>
-                </div>
+              <div className="flex items-center justify-between border-b border-[#202026] pb-2.5">
+                <span className="text-[13px] font-semibold text-[#f0f0f0]">
+                  {selectedProcess.name}
+                </span>
                 <button
                   type="button"
                   onClick={() => setSelectedProcess(null)}
-                  className="rounded p-1 text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200"
-                  aria-label="Close dialog"
+                  className="h-6 w-6 rounded-full text-[#a1a1aa] hover:bg-[#202026] hover:text-[#f0f0f0]"
                 >
                   ✕
                 </button>
               </div>
 
-              <div className="my-3 space-y-2 font-mono text-caption-12-regular text-zinc-300">
-                <div className="flex justify-between border-b border-zinc-800/60 pb-1">
-                  <span className="text-zinc-500">{t('demo.state')}</span>
-                  <span>{selectedProcess.state}</span>
+              <div className="my-3 space-y-1.5 font-ibm-mono text-[11px] text-[#a1a1aa]">
+                <div className="flex justify-between py-0.5 border-b border-[#202026]">
+                  <span className="text-[#787878]">PID</span>
+                  <span className="text-[#f0f0f0]">{selectedProcess.pid}</span>
                 </div>
-                <div className="flex justify-between border-b border-zinc-800/60 pb-1">
-                  <span className="text-zinc-500">{t('demo.threads')}</span>
-                  <span>{selectedProcess.threads} threads</span>
+                <div className="flex justify-between py-0.5 border-b border-[#202026]">
+                  <span className="text-[#787878]">State</span>
+                  <span className="text-[#f0f0f0]">{selectedProcess.state}</span>
                 </div>
-                <div className="flex justify-between border-b border-zinc-800/60 pb-1">
-                  <span className="text-zinc-500">Memory RSS</span>
-                  <span>{selectedProcess.memMb} MB</span>
+                <div className="flex justify-between py-0.5 border-b border-[#202026]">
+                  <span className="text-[#787878]">Threads</span>
+                  <span className="text-[#f0f0f0]">{selectedProcess.threads}</span>
                 </div>
-                <div className="flex justify-between border-b border-zinc-800/60 pb-1">
-                  <span className="text-zinc-500">Memory PSS</span>
-                  <span>{selectedProcess.pssMb} MB</span>
+                <div className="flex justify-between py-0.5 border-b border-[#202026]">
+                  <span className="text-[#787878]">Memory RSS</span>
+                  <span className="text-[#f0f0f0]">{selectedProcess.memMb} MB</span>
+                </div>
+                <div className="flex justify-between py-0.5 border-b border-[#202026]">
+                  <span className="text-[#787878]">Memory PSS</span>
+                  <span className="text-[#f0f0f0]">{selectedProcess.pssMb} MB</span>
                 </div>
                 <div className="pt-1">
-                  <span className="text-zinc-500 text-[11px] block">{t('demo.cmdline')}:</span>
-                  <p className="mt-1 break-all rounded bg-zinc-950 p-2 text-[10.5px] text-zinc-300 select-all">
+                  <span className="text-[#787878] block">Command:</span>
+                  <p className="mt-1 break-all rounded bg-[#202026] p-2 text-[10px] text-[#f0f0f0]">
                     {selectedProcess.cmdline}
                   </p>
                 </div>
               </div>
 
-              <div className="mt-4 flex gap-2">
+              <div className="mt-3 flex gap-2">
                 <button
                   type="button"
                   onClick={() => killProcess(selectedProcess.pid)}
-                  className="flex-1 rounded-md bg-red-600/20 py-1.5 font-mono text-caption-12-medium text-red-300 transition-colors hover:bg-red-600/30"
+                  className="flex-1 rounded-[6px] bg-red-600/20 py-1.5 font-ibm-mono text-[11px] font-semibold text-red-400 hover:bg-red-600/30"
                 >
                   Terminate (SIGTERM)
                 </button>
                 <button
                   type="button"
                   onClick={() => setSelectedProcess(null)}
-                  className="rounded-md border border-zinc-800 px-3 py-1.5 text-caption-12-medium text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200"
+                  className="rounded-[6px] bg-[#202026] px-3 py-1.5 text-[11px] text-[#a1a1aa] hover:bg-[#2c2c34] hover:text-[#f0f0f0]"
                 >
-                  {t('demo.close')}
+                  Close
                 </button>
               </div>
             </motion.div>
@@ -856,10 +941,75 @@ export function GlanceInteractiveDemo() {
         )}
       </AnimatePresence>
 
-      {/* Interactive Helper Ribbon */}
-      <div className="bg-zinc-900/90 px-3 py-1.5 text-center font-mono text-[10.5px] text-zinc-400 border-t border-zinc-800/60">
-        💡 {t('demo.hint')}
-      </div>
+      {/* Minimized Tray View (When window is closed) */}
+      <AnimatePresence>
+        {isMinimized && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 z-40 flex flex-col items-center justify-center bg-[#18181b]/95 p-6 backdrop-blur-xs text-center"
+          >
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#202026] text-sm font-semibold text-white shadow-inner">
+              G
+            </div>
+            <span className="mt-3 text-[13px] font-medium text-[#f0f0f0]">
+              Glance running in system tray
+            </span>
+            <span className="mt-1 font-ibm-mono text-[11px] text-[#a1a1aa]">
+              0.00% CPU · 65 MB RAM
+            </span>
+            <button
+              type="button"
+              onClick={() => setIsMinimized(false)}
+              className="mt-4 rounded-full bg-[#202026] px-4 py-1.5 text-[12px] font-medium text-[#f0f0f0] transition-colors hover:bg-[#2c2c34]"
+            >
+              Restore Window
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* About Glance Modal */}
+      <AnimatePresence>
+        {showAboutModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 z-40 flex items-center justify-center bg-black/80 p-4 backdrop-blur-xs"
+            onClick={() => setShowAboutModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-[300px] rounded-[18px] border border-[#2c2c34] bg-[#18181b] p-5 text-center shadow-2xl font-ibm-sans"
+            >
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-zinc-800 text-lg font-bold text-white shadow-inner">
+                G
+              </div>
+              <h3 className="mt-3 text-[15px] font-semibold text-[#f0f0f0]">Glance</h3>
+              <span className="text-[11px] font-ibm-mono text-[#a1a1aa]">v0.1.0</span>
+              <p className="mt-2 text-[12px] text-[#a1a1aa] leading-relaxed">
+                Grouped process monitor for Linux. Progressive disclosure and true zero idle CPU.
+              </p>
+              <div className="mt-3 pt-3 border-t border-[#202026] text-[11px] text-[#787878]">
+                Created by Maycon Douglas
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowAboutModal(false)}
+                className="mt-4 w-full rounded-lg bg-[#202026] py-1.5 text-[12px] font-medium text-[#f0f0f0] hover:bg-[#2c2c34]"
+              >
+                Close
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
     </div>
   )
 }

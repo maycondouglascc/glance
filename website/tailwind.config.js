@@ -35,6 +35,8 @@ export default {
       fontFamily: {
         sans: ["Inter", "-apple-system", "BlinkMacSystemFont", "sans-serif"],
         mono: ["JetBrains Mono", "ui-monospace", "SFMono-Regular", "monospace"],
+        "ibm-sans": ["'IBM Plex Sans'", "Cantarell", "-apple-system", "sans-serif"],
+        "ibm-mono": ["'IBM Plex Mono'", "ui-monospace", "SFMono-Regular", "monospace"],
       },
       keyframes: {
         fadeIn: {

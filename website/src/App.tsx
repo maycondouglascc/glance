@@ -69,7 +69,7 @@ function MainContent() {
               
               {/* SECTION 0: HERO & INTERACTIVE APP */}
               <TransitionChild index={0}>
-                <section className="flex flex-col gap-6 border-b border-zinc-200 pb-8 dark:border-zinc-800">
+                <section className="flex flex-col gap-6">
                   {/* App Glyph & Version */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
@@ -120,16 +120,7 @@ function MainContent() {
                   </div>
 
                   {/* INTERACTIVE GLANCE DEMO */}
-                  <div className="mt-2 flex flex-col gap-2">
-                    <div className="flex items-center justify-between px-1">
-                      <span className="text-caption-12-medium font-medium text-zinc-900 dark:text-zinc-100">
-                        {t('demo.badge')}
-                      </span>
-                      <span className="text-caption-11-regular text-zinc-500 dark:text-zinc-400">
-                        Try expanding & filtering below
-                      </span>
-                    </div>
-
+                  <div className="mt-2">
                     <GlanceInteractiveDemo />
                   </div>
                 </section>
@@ -222,7 +213,7 @@ function MainContent() {
 
               {/* SECTION 3: ABOUT THE CREATOR */}
               <TransitionChild index={3}>
-                <section className="flex flex-col gap-4 border-t border-zinc-200 pt-8 dark:border-zinc-800">
+                <section className="flex flex-col gap-4">
                   <h2 className="text-body-15-medium font-medium text-zinc-900 dark:text-zinc-100">
                     {t('author.title')}
                   </h2>
