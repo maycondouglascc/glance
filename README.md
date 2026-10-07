@@ -38,24 +38,51 @@ glance/
 
 ## Installation
 
-### Universal One-Line Installer (Linux)
+### 1. Universal One-Line Installer (Recommended)
 
-Install the latest release directly to `~/.local/bin`:
+Quickly install Glance to `~/.local/bin` (no root required):
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/maycondouglascc/glance/main/install.sh | sh
 ```
 
-### Ubuntu / Debian (.deb)
-
-Download and install the native Debian package from [Releases](https://github.com/maycondouglascc/glance/releases):
+Or install system-wide to `/usr/local/bin`:
 
 ```bash
-gh release download --repo maycondouglascc/glance --pattern "*.deb"
-sudo apt install ./glance_*_amd64.deb
+curl -fsSL https://raw.githubusercontent.com/maycondouglascc/glance/main/install.sh | sudo sh
 ```
 
-### Build from Source
+### 2. Ubuntu / Debian (.deb)
+
+Download and install the latest `.deb` package directly from [GitHub Releases](https://github.com/maycondouglascc/glance/releases/latest):
+
+```bash
+curl -LO https://github.com/maycondouglascc/glance/releases/latest/download/glance_0.1.0_amd64.deb
+sudo apt install ./glance_0.1.0_amd64.deb
+```
+
+### 3. Arch Linux / Manjaro
+
+Clone and build using the provided PKGBUILD:
+
+```bash
+git clone https://github.com/maycondouglascc/glance.git
+cd glance/packaging/aur
+makepkg -si
+```
+
+### 4. Tarball (Any Linux Distribution)
+
+Download and extract pre-compiled binaries:
+
+```bash
+curl -LO https://github.com/maycondouglascc/glance/releases/latest/download/glance-linux-x86_64.tar.gz
+tar -xzf glance-linux-x86_64.tar.gz
+install -m 755 glance ~/.local/bin/glance
+install -m 755 glance-tree ~/.local/bin/glance-tree
+```
+
+### 5. Build from Source
 
 ```bash
 git clone https://github.com/maycondouglascc/glance.git
