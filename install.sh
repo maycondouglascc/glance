@@ -58,6 +58,18 @@ else
     META_DIR="${HOME}/.local/share/metainfo"
 fi
 
+if [ "$1" = "--uninstall" ] || [ "$1" = "uninstall" ]; then
+    info "Uninstalling Glance..."
+    rm -f "${BIN_DIR}/glance" "${BIN_DIR}/glance-tree"
+    rm -f "${APP_DIR}/io.github.maycon.Glance.desktop"
+    rm -f "${META_DIR}/io.github.maycon.Glance.metainfo.xml"
+    if command -v update-desktop-database >/dev/null 2>&1; then
+        update-desktop-database "$APP_DIR" >/dev/null 2>&1 || true
+    fi
+    success "Glance has been uninstalled successfully from ${BIN_DIR}."
+    exit 0
+fi
+
 mkdir -p "$BIN_DIR" "$APP_DIR" "$META_DIR"
 
 # 4. Check for downloader (curl or wget)
