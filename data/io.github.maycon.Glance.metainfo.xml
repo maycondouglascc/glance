@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.maycon.Glance</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <name>Glance</name>
+  <summary>Lightweight real-time Linux process and application monitor</summary>
+  <description>
+    <p>
+      Glance is a high-performance desktop process monitor designed for Linux.
+      Instead of exposing a raw, overwhelming process table, it groups related
+      Linux processes under their parent applications using systemd cgroup scopes,
+      Flatpak/Snap identifiers, and desktop entry metadata.
+    </p>
+    <p>Features:</p>
+    <ul>
+      <li>Notion-style progressive disclosure toggles for application process trees</li>
+      <li>Accurate memory accounting (PSS) and machine-wide CPU deltas</li>
+      <li>Instant race-free process termination via pidfd with safety protection tiers</li>
+      <li>Adaptive refresh cadence pausing when window is hidden</li>
+      <li>Native GNOME/Ubuntu styling with dark and light theme integration</li>
+    </ul>
+  </description>
+  <launchable type="desktop-id">io.github.maycon.Glance.desktop</launchable>
+  <provides>
+    <binary>glance</binary>
+  </provides>
+</component>

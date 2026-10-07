@@ -1,0 +1,250 @@
+/* Glance — 1:1 Pixel-Accurate Dark Zinc Theme Matching Figma */
+
+window.glance-window,
+window.glance-window > contents,
+.glance-window {
+    background-color: #18181b;
+    border-radius: 24px;
+    font-family: "IBM Plex Sans", Cantarell, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: #f0f0f0;
+}
+
+headerbar.glance-header,
+headerbar.flat {
+    background: transparent;
+    background-color: transparent;
+    background-image: none;
+    border: none;
+    box-shadow: none;
+    min-height: 32px;
+    padding-top: 10px;
+    padding-bottom: 6px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.header-icon-btn,
+.header-icon-btn button {
+    min-width: 32px;
+    min-height: 32px;
+    border-radius: 99px;
+    background-color: #202026;
+    color: #a1a1aa;
+    border: none;
+    outline: none;
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+}
+
+.header-icon-btn:hover,
+.header-icon-btn button:hover {
+    background-color: #2c2c34;
+    color: #f0f0f0;
+}
+
+.header-icon-btn image {
+    -gtk-icon-size: 16px;
+}
+
+.glance-search {
+    min-width: 238px;
+    min-height: 32px;
+    border-radius: 99px;
+    background-color: #202026;
+    color: #f0f0f0;
+    border: none;
+    box-shadow: none;
+    padding: 0 10px;
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: 12px;
+}
+
+.glance-search text {
+    color: #f0f0f0;
+    font-size: 12px;
+}
+
+.glance-search placeholder {
+    color: #8e8e8e;
+    font-size: 12px;
+    opacity: 1;
+}
+
+.glance-search image.search {
+    color: #a1a1aa;
+    -gtk-icon-size: 16px;
+}
+
+.column-header {
+    background: transparent;
+}
+
+.col-header-app {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #a1a1aa;
+    text-transform: uppercase;
+}
+
+.col-header-metric {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #787878;
+    text-transform: uppercase;
+}
+
+.numeric {
+    font-feature-settings: "tnum";
+}
+
+.app-group-card {
+    border-radius: 6px;
+    margin-bottom: 2px;
+    background: transparent;
+    border: none;
+}
+
+.app-header-row {
+    padding: 2px 4px;
+    border-radius: 6px;
+    min-height: 24px;
+    transition: background-color 100ms ease;
+}
+
+.app-header-row:hover {
+    background-color: alpha(#ffffff, 0.04);
+}
+
+.chevron-btn {
+    min-width: 20px;
+    min-height: 20px;
+    border-radius: 99px;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    color: #a1a1aa;
+}
+
+.chevron-btn:hover {
+    color: #f0f0f0;
+}
+
+.chevron-btn image {
+    -gtk-icon-size: 14px;
+}
+
+.app-icon {
+    border-radius: 4px;
+}
+
+.app-title {
+    font-family: "IBM Plex Sans", sans-serif;
+    font-weight: 600;
+    font-size: 12px;
+    color: #f0f0f0;
+}
+
+.app-metric {
+    font-family: "IBM Plex Sans", monospace;
+    font-weight: 600;
+    font-size: 12px;
+    color: #f0f0f0;
+}
+
+.proc-count,
+.badge {
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    padding: 2px 8px;
+    border-radius: 2px;
+    background-color: #202026;
+    color: #9e9e9e;
+}
+
+.action-pill-btn {
+    min-width: 20px;
+    min-height: 20px;
+    border-radius: 99px;
+    background-color: #202026;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    color: #a1a1aa;
+}
+
+.action-pill-btn:hover {
+    background-color: #2c2c34;
+    color: #f0f0f0;
+}
+
+.action-pill-btn image {
+    -gtk-icon-size: 12px;
+}
+
+.proc-children-container {
+    border-left: 1.5px solid #202026;
+    margin-left: 14px;
+    padding-left: 10px;
+    margin-bottom: 4px;
+}
+
+.proc-row {
+    padding: 2px 4px;
+    border-radius: 6px;
+    transition: background-color 100ms ease;
+}
+
+.proc-row:hover {
+    background-color: alpha(#ffffff, 0.04);
+}
+
+.proc-name {
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: #a1a1aa;
+}
+
+.proc-metric {
+    font-family: "IBM Plex Sans", monospace;
+    font-size: 12px;
+    font-weight: 500;
+    color: #a1a1aa;
+}
+
+.section-header {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.section-title {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #a1a1aa;
+    text-transform: uppercase;
+}
+
+.footer-bar {
+    border-top: 1px solid #202026;
+    padding-top: 16px;
+    padding-bottom: 16px;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.footer-text {
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: #a1a1aa;
+}

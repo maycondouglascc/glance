@@ -1,0 +1,15 @@
+[package]
+name = "glance-cli"
+description = "Developer CLI: print Glance's grouped process tree"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[[bin]]
+name = "glance-tree"
+path = "src/main.rs"
+
+[dependencies]
+glance-proc.workspace = true
+glance-group.workspace = true

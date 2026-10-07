@@ -1,0 +1,10 @@
+[package]
+name = "glance-group"
+description = "Process-to-application grouping engine for Glance"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+glance-proc.workspace = true

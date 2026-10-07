@@ -1,0 +1,6 @@
+/target
+.agents/
+*.png
+figma_node.json
+glance-layout.html
+glance-layout.svg

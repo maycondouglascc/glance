@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=Glance
+Comment=Lightweight real-time Linux process and application monitor
+Exec=glance
+Icon=utilities-system-monitor
+Terminal=false
+Type=Application
+Categories=System;Monitor;Utility;
+Keywords=process;task;system;monitor;cpu;memory;kill;glance;
+StartupNotify=true
+StartupWMClass=glance
+SingleMainWindow=true

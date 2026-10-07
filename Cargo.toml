@@ -1,0 +1,20 @@
+[workspace]
+resolver = "3"
+members = ["crates/glance-proc", "crates/glance-group", "crates/glance-cli", "crates/glance"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "GPL-3.0-or-later"
+rust-version = "1.85"
+
+[workspace.dependencies]
+rustix = { version = "1.1", features = ["fs", "process", "event", "param", "std"] }
+glance-proc = { path = "crates/glance-proc" }
+glance-group = { path = "crates/glance-group" }
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+panic = "abort"
+strip = true
