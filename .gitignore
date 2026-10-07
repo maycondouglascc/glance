@@ -1,6 +1,10 @@
 /target
 .agents/
-*.png
+node_modules/
+website/dist/
+/current_render.png
+/figma_target.png
+/side_by_side_comparison.png
 figma_node.json
 glance-layout.html
 glance-layout.svg

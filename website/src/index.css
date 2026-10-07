@@ -1,0 +1,77 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --palette-neutral-hue: 240;
+    --palette-neutral-saturation: 5%;
+    --palette-accent-hue: 250;
+    --palette-accent-saturation: 60%;
+    --palette-accent-lightness: 42%;
+    --palette-accent-hover-lightness: 32%;
+    --palette-zinc-50: 98%;
+    --palette-zinc-100: 95%;
+    --palette-zinc-200: 90%;
+    --palette-zinc-300: 82%;
+    --palette-zinc-400: 64%;
+    --palette-zinc-500: 48%;
+    --palette-zinc-600: 38%;
+    --palette-zinc-700: 28%;
+    --palette-zinc-800: 18%;
+    --palette-zinc-900: 12%;
+    --palette-zinc-950: 6%;
+  }
+
+  :root.dark {
+    --palette-neutral-hue: 240;
+    --palette-neutral-saturation: 5%;
+    --palette-accent-lightness: 72%;
+    --palette-accent-hover-lightness: 82%;
+    --palette-zinc-50: 98%;
+    --palette-zinc-100: 93%;
+    --palette-zinc-200: 84%;
+    --palette-zinc-300: 72%;
+    --palette-zinc-400: 60%;
+    --palette-zinc-500: 48%;
+    --palette-zinc-600: 38%;
+    --palette-zinc-700: 28%;
+    --palette-zinc-800: 18%;
+    --palette-zinc-900: 11%;
+    --palette-zinc-950: 5%;
+  }
+
+  html {
+    font-family: theme("fontFamily.sans");
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  a,
+  button,
+  [role="button"] {
+    touch-action: manipulation;
+  }
+
+  a {
+    @apply text-zinc-900 underline-offset-2 transition-colors dark:text-zinc-100;
+  }
+
+  a:hover {
+    @apply underline;
+  }
+
+  a:focus-visible,
+  button:focus-visible {
+    @apply rounded outline outline-2 outline-zinc-900 outline-offset-2 dark:outline-zinc-100;
+  }
+}
+
+@layer utilities {
+  .palette-transition {
+    transition: color 240ms ease, background-color 240ms ease, border-color 240ms ease;
+  }
+}

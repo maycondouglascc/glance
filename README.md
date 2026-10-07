@@ -2,12 +2,15 @@
 
 [![Release](https://img.shields.io/github/v/release/maycondouglascc/glance?color=blue&label=release)](https://github.com/maycondouglascc/glance/releases)
 [![Build Status](https://github.com/maycondouglascc/glance/actions/workflows/release.yml/badge.svg)](https://github.com/maycondouglascc/glance/actions/workflows/release.yml)
+[![Website](https://img.shields.io/badge/website-maycondouglascc.github.io%2Fglance-blue.svg)](https://maycondouglascc.github.io/glance)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Rust](https://img.shields.io/badge/rust-1.85%2B-orange.svg)](https://www.rust-lang.org)
 [![GTK4](https://img.shields.io/badge/GTK-4.14%2B-green.svg)](https://gtk.org)
 [![Libadwaita](https://img.shields.io/badge/libadwaita-1.5%2B-purple.svg)](https://gnome.pages.gitlab.gnome.org/libadwaita/)
 
 A lightweight, high-performance Linux desktop application and process monitor designed for Linux desktops (GNOME, COSMIC, KDE Plasma, etc.). Glance provides a real-time, grouped view of running applications and their underlying processes using systemd cgroup scopes and progressive disclosure.
+
+Visit the [Glance Landing Page](https://maycondouglascc.github.io/glance) to learn more.
 
 ---
 
@@ -188,12 +191,23 @@ glance/
 │   └── io.github.maycon.Glance.metainfo.xml
 ├── packaging/
 │   └── aur/PKGBUILD                    # Arch Linux package build
+├── docs/                               # Deployed landing page (GitHub Pages)
+├── website/                            # Landing page source (Vite + React + Tailwind)
 └── crates/
     ├── glance-proc/                    # /proc scanner, tiered reads, pidfd signals (no GTK)
     ├── glance-group/                   # cgroup leaf parser, desktop index, resolver chain (no GTK)
     ├── glance-cli/                     # glance-tree terminal tree viewer & benchmark spike
     └── glance/                         # GTK4 + libadwaita desktop utility
 ```
+
+---
+
+## Author
+
+Created by **Maycon Douglas**, Product Designer.
+- Portfolio: [maycondouglas.work](https://maycondouglas.work)
+- GitHub: [@maycondouglascc](https://github.com/maycondouglascc)
+- LinkedIn: [maycondouglascc](https://linkedin.com/in/maycondouglascc)
 
 ---
 
