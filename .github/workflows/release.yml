@@ -68,19 +68,19 @@ jobs:
           cp data/io.github.maycon.Glance.desktop "$DEB_DIR/usr/share/applications/"
           cp data/io.github.maycon.Glance.metainfo.xml "$DEB_DIR/usr/share/metainfo/"
 
-          cat <<EOF > "$DEB_DIR/DEBIAN/control"
-Package: glance
-Version: ${VERSION}
-Section: utils
-Priority: optional
-Architecture: amd64
-Depends: libc6, libgtk-4-1, libadwaita-1-0
-Maintainer: Maycon Douglas <hellomaycondouglas@gmail.com>
-Homepage: https://github.com/maycondouglascc/glance
-Description: Lightweight application and process monitor for Linux
- Glance provides a real-time, grouped view of running Linux applications
- and processes using systemd cgroup scopes and progressive disclosure.
-EOF
+          printf "%s\n" \
+            "Package: glance" \
+            "Version: ${VERSION}" \
+            "Section: utils" \
+            "Priority: optional" \
+            "Architecture: amd64" \
+            "Depends: libc6, libgtk-4-1, libadwaita-1-0" \
+            "Maintainer: Maycon Douglas <hellomaycondouglas@gmail.com>" \
+            "Homepage: https://github.com/maycondouglascc/glance" \
+            "Description: Lightweight application and process monitor for Linux" \
+            " Glance provides a real-time, grouped view of running Linux applications" \
+            " and processes using systemd cgroup scopes and progressive disclosure." \
+            > "$DEB_DIR/DEBIAN/control"
 
           dpkg-deb --build "$DEB_DIR" "glance_${VERSION}_amd64.deb"
           sha256sum "glance_${VERSION}_amd64.deb" > "glance_${VERSION}_amd64.deb.sha256"
@@ -88,6 +88,7 @@ EOF
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: "v${{ steps.get_version.outputs.VERSION }}"
           files: |
             glance-linux-x86_64.tar.gz
             glance-linux-x86_64.tar.gz.sha256
