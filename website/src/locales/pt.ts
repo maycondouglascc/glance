@@ -18,7 +18,7 @@ export const pt = {
   intro: {
     name: 'Glance',
     badge: 'v0.1.0',
-    title: 'Glance. Monitor de processos agrupados para Linux.',
+    title: 'Monitor de processos agrupados para Linux.',
     description:
       'Um utilitário rápido e enxuto para Linux que agrupa processos em execução por aplicativo com progressive disclosure. 0% de CPU ociosa e ~65 MB de RAM no tray.',
     quickInstall: 'Instalação rápida em ~/.local/bin',
@@ -83,11 +83,7 @@ export const pt = {
     portfolioLink: 'Conheça meu portfólio de design →',
   },
   footer: {
-    contact: 'Contato & Links',
-    portfolio: 'Portfólio',
-    github: 'GitHub',
-    linkedin: 'LinkedIn',
-    email: 'Copiar Email',
-    license: 'Licença GPL-3.0',
+    madeWith: 'Made with <3',
+    license: 'GPL-3.0 License',
   },
 }

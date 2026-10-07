@@ -18,7 +18,7 @@ export const en = {
   intro: {
     name: 'Glance',
     badge: 'v0.1.0',
-    title: 'Glance. Grouped process monitor for Linux.',
+    title: 'Grouped process monitor for Linux',
     description:
       'A small, fast Linux utility that groups running processes by application with progressive disclosure. 0% idle CPU and ~65 MB RAM in the system tray.',
     quickInstall: 'Quick install to ~/.local/bin',
@@ -83,11 +83,7 @@ export const en = {
     portfolioLink: 'Explore my design portfolio →',
   },
   footer: {
-    contact: 'Contact & Links',
-    portfolio: 'Portfolio',
-    github: 'GitHub',
-    linkedin: 'LinkedIn',
-    email: 'Copy Email',
+    madeWith: 'Made with <3',
     license: 'GPL-3.0 License',
   },
 }

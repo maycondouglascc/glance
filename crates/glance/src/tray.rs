@@ -23,7 +23,7 @@ impl Tray for GlanceTray {
     }
 
     fn icon_name(&self) -> String {
-        "utilities-system-monitor".into()
+        "io.github.maycon.Glance".into()
     }
 
     fn activate(&mut self, _x: i32, _y: i32) {

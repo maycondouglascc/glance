@@ -48,6 +48,7 @@ jobs:
           cp target/release/glance "$STAGING/"
           cp target/release/glance-tree "$STAGING/"
           cp data/io.github.maycon.Glance.desktop "$STAGING/"
+          cp data/icons/hicolor/scalable/apps/io.github.maycon.Glance.svg "$STAGING/"
           cp data/io.github.maycon.Glance.metainfo.xml "$STAGING/"
           cp README.md "$STAGING/"
           cp LICENSE "$STAGING/"
@@ -61,11 +62,13 @@ jobs:
           mkdir -p "$DEB_DIR/DEBIAN"
           mkdir -p "$DEB_DIR/usr/bin"
           mkdir -p "$DEB_DIR/usr/share/applications"
+          mkdir -p "$DEB_DIR/usr/share/icons/hicolor/scalable/apps"
           mkdir -p "$DEB_DIR/usr/share/metainfo"
 
           cp target/release/glance "$DEB_DIR/usr/bin/"
           cp target/release/glance-tree "$DEB_DIR/usr/bin/"
           cp data/io.github.maycon.Glance.desktop "$DEB_DIR/usr/share/applications/"
+          cp data/icons/hicolor/scalable/apps/io.github.maycon.Glance.svg "$DEB_DIR/usr/share/icons/hicolor/scalable/apps/"
           cp data/io.github.maycon.Glance.metainfo.xml "$DEB_DIR/usr/share/metainfo/"
 
           printf "%s\n" \

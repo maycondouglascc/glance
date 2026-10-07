@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Terminal G logo</title>
+  <desc id="desc">Minimal terminal icon with greater-than prompt and G above underscore. Transparent background.</desc>
+
+  <!-- Outer terminal/key shape -->
+  <path
+    d="M106 135
+       L151 90
+       Q160 81 176 81
+       H356
+       Q374 81 378 99
+       L395 298
+       Q397 311 388 320
+       L342 366
+       Q333 375 320 375
+       H137
+       Q118 375 115 356
+       L89 165
+       Q87 148 98 139
+       Z"
+    fill="#000000"/>
+
+  <!-- Screen -->
+  <path
+    d="M170 106
+       H344
+       Q357 106 359 119
+       L374 286
+       Q376 301 361 301
+       H184
+       Q171 301 169 288
+       L154 123
+       Q152 106 170 106
+       Z"
+    fill="#FFFFFF"/>
+
+  <!-- Greater-than prompt -->
+  <path
+    d="M205 166
+       L245 198
+       Q251 203 245 208
+       L205 240"
+    fill="none"
+    stroke="#000000"
+    stroke-width="18"
+    stroke-linecap="round"
+    stroke-linejoin="round"/>
+
+  <!-- G -->
+  <path
+    fill="#000000"
+    fill-rule="evenodd"
+    d="M312 150
+       C286 150 267 169 267 195
+       C267 221 286 240 313 240
+       C327 240 339 235 348 226
+       V194
+       H310
+       V209
+       H331
+       V218
+       C326 222 320 224 313 224
+       C296 224 284 212 284 195
+       C284 178 296 166 312 166
+       C323 166 332 170 339 177
+       L350 165
+       C339 155 326 150 312 150
+       Z"/>
+
+  <!-- Underscore cursor -->
+  <rect x="285" y="253" width="69" height="18" rx="9" fill="#000000"/>
+</svg>

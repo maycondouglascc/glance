@@ -397,7 +397,7 @@ export function GlanceInteractiveDemo() {
   const hasKilled = killedPids.size > 0
 
   return (
-    <div className="relative mx-auto w-full max-w-[442px] select-none overflow-hidden rounded-[24px] bg-[#18181b] font-ibm-sans text-[#f0f0f0] shadow-2xl ring-1 ring-white/5">
+    <div className="relative mx-auto w-full select-none overflow-hidden rounded-[24px] bg-[#18181b] font-ibm-sans text-[#f0f0f0] shadow-2xl ring-1 ring-white/5">
       
       {/* 1:1 GTK Headerbar (32px height, flat transparent) */}
       <div className="flex items-center justify-between px-2.5 pt-2.5 pb-1.5">
@@ -459,7 +459,7 @@ export function GlanceInteractiveDemo() {
         </div>
 
         {/* Center Search Entry (260x32, #202026, 12px) */}
-        <div className="relative mx-2 flex h-8 flex-1 max-w-[260px] items-center">
+        <div className="relative mx-2 flex h-8 flex-1 items-center">
           <svg
             className="pointer-events-none absolute left-2.5 h-4 w-4 text-[#a1a1aa]"
             fill="none"
@@ -575,8 +575,8 @@ export function GlanceInteractiveDemo() {
       <div className="flex items-center px-4 pt-1 pb-1.5 font-ibm-mono text-[10px] font-bold tracking-[1px] uppercase">
         <span className="text-[#a1a1aa]">APPLICATION</span>
         <div className="ml-auto flex items-center">
-          <span className="w-[36px] text-right text-[#787878]">CPU</span>
-          <span className="ml-[24px] w-[38px] text-right text-[#787878]">RAM</span>
+          <span className=" text-right text-[#787878]">CPU</span>
+          <span className="ml-[24px] text-right text-[#787878]">RAM</span>
           <div className="w-[44px] ml-[16px]" />
         </div>
       </div>
@@ -631,7 +631,7 @@ export function GlanceInteractiveDemo() {
                     <span className="w-[36px] text-right font-ibm-mono text-[12px] font-semibold text-[#f0f0f0]">
                       {app.totalCpu.toFixed(1)}%
                     </span>
-                    <span className="ml-[24px] w-[38px] text-right font-ibm-mono text-[12px] font-semibold text-[#f0f0f0]">
+                    <span className="ml-[24px] text-right font-ibm-mono text-[12px] font-semibold text-[#f0f0f0]">
                       {(app.totalMemMb / 1024).toFixed(1)} GB
                     </span>
 
@@ -674,7 +674,7 @@ export function GlanceInteractiveDemo() {
                             <span className="w-[36px] text-right font-ibm-mono text-[12px] font-medium text-[#a1a1aa]">
                               {proc.cpu.toFixed(1)}%
                             </span>
-                            <span className="ml-[24px] w-[38px] text-right font-ibm-mono text-[12px] font-medium text-[#a1a1aa]">
+                            <span className="ml-[24px] text-right font-ibm-mono text-[12px] font-medium text-[#a1a1aa]">
                               {(proc.memMb >= 1024 ? `${(proc.memMb / 1024).toFixed(1)} GB` : `${proc.memMb} MB`)}
                             </span>
 
@@ -751,7 +751,7 @@ export function GlanceInteractiveDemo() {
                       <span className="w-[36px] text-right font-ibm-mono text-[12px] font-medium text-[#a1a1aa]">
                         {proc.cpu.toFixed(1)}%
                       </span>
-                      <span className="ml-[24px] w-[38px] text-right font-ibm-mono text-[12px] font-medium text-[#a1a1aa]">
+                      <span className="ml-[24px] text-right font-ibm-mono text-[12px] font-medium text-[#a1a1aa]">
                         {proc.memMb} MB
                       </span>
                       <div className="ml-[16px] flex w-[44px] items-center justify-end gap-1">
@@ -821,7 +821,7 @@ export function GlanceInteractiveDemo() {
                       <span className="w-[36px] text-right font-ibm-mono text-[12px] font-medium text-[#a1a1aa]">
                         {proc.cpu.toFixed(1)}%
                       </span>
-                      <span className="ml-[24px] w-[38px] text-right font-ibm-mono text-[12px] font-medium text-[#a1a1aa]">
+                      <span className="ml-[24px]text-right font-ibm-mono text-[12px] font-medium text-[#a1a1aa]">
                         {proc.memMb} MB
                       </span>
                       <div className="ml-[16px] flex w-[44px] items-center justify-end gap-1">
@@ -950,9 +950,11 @@ export function GlanceInteractiveDemo() {
             exit={{ opacity: 0 }}
             className="absolute inset-0 z-40 flex flex-col items-center justify-center bg-[#18181b]/95 p-6 backdrop-blur-xs text-center"
           >
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#202026] text-sm font-semibold text-white shadow-inner">
-              G
-            </div>
+            <img
+              src="./logo.svg"
+              alt="Glance"
+              className="h-12 w-12 object-contain drop-shadow-xs"
+            />
             <span className="mt-3 text-[13px] font-medium text-[#f0f0f0]">
               Glance running in system tray
             </span>
@@ -987,9 +989,11 @@ export function GlanceInteractiveDemo() {
               onClick={(e) => e.stopPropagation()}
               className="w-full max-w-[300px] rounded-[18px] border border-[#2c2c34] bg-[#18181b] p-5 text-center shadow-2xl font-ibm-sans"
             >
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-zinc-800 text-lg font-bold text-white shadow-inner">
-                G
-              </div>
+              <img
+                src="./logo.svg"
+                alt="Glance"
+                className="mx-auto h-12 w-12 object-contain drop-shadow-xs"
+              />
               <h3 className="mt-3 text-[15px] font-semibold text-[#f0f0f0]">Glance</h3>
               <span className="text-[11px] font-ibm-mono text-[#a1a1aa]">v0.1.0</span>
               <p className="mt-2 text-[12px] text-[#a1a1aa] leading-relaxed">

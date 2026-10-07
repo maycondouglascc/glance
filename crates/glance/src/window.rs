@@ -60,6 +60,7 @@ impl MainWindow {
             .width_request(380)
             .height_request(420)
             .build();
+        window.set_icon_name(Some("io.github.maycon.Glance"));
         window.add_css_class("glance-window");
 
         let toast_overlay = adw::ToastOverlay::new();
@@ -447,7 +448,7 @@ impl MainWindow {
         act_about.connect_activate(move |_, _| {
             let about = adw::AboutDialog::builder()
                 .application_name("Glance")
-                .application_icon("system-monitoring-symbolic")
+                .application_icon("io.github.maycon.Glance")
                 .developer_name("Maycon & Antigravity")
                 .version("0.1.0")
                 .comments("Lightweight high-performance Linux process & application monitor.")

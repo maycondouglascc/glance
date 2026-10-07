@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="data/icons/hicolor/scalable/apps/io.github.maycon.Glance.svg" width="96" height="96" alt="Glance Logo">
+</p>
+
 # Glance
 
 [![Release](https://img.shields.io/github/v/release/maycondouglascc/glance?color=blue&label=release)](https://github.com/maycondouglascc/glance/releases)
@@ -11,6 +15,16 @@
 A lightweight, high-performance Linux desktop application and process monitor designed for Linux desktops (GNOME, COSMIC, KDE Plasma, etc.). Glance provides a real-time, grouped view of running applications and their underlying processes using systemd cgroup scopes and progressive disclosure.
 
 Visit the [Glance Landing Page](https://maycondouglascc.github.io/glance) to learn more.
+
+---
+
+## Launching Glance
+
+Once installed, you do **not** need to open a terminal to run Glance:
+- **App Menu & Dock**: Press `Super` (Windows key) on your keyboard, search for **Glance**, and click to launch.
+- **Pin to Dock**: Right-click the Glance icon in your dock / Dash and select **Pin to Dash** / **Add to Favorites**.
+- **System Tray**: Closing the window keeps Glance running silently in your system tray at 0.00% idle CPU and ~65 MB RAM.
+- **Terminal (Optional)**: You can also start the GUI with `glance` or run `glance-tree` for the interactive CLI tree view.
 
 ---
 

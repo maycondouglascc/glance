@@ -5,10 +5,7 @@ export default function Footer() {
 
   return (
     <footer className="mt-12 pt-6">
-      <h2 className="text-body-15-medium font-medium text-zinc-900 dark:text-zinc-100">
-        {t('footer.contact')}
-      </h2>
-      <ul className="mt-4 flex flex-wrap items-center gap-4 text-body-15-medium font-medium">
+      <ul className="flex flex-wrap items-center gap-4 text-body-15-medium font-medium">
         <li>
           <a
             href="https://maycondouglas.work"
@@ -16,29 +13,10 @@ export default function Footer() {
             rel="noopener noreferrer"
             className="text-accent dark:text-accent font-medium hover:underline"
           >
-            {t('footer.portfolio')}
+            {t('footer.madeWith')}
           </a>
         </li>
-        <li>
-          <a
-            href="https://github.com/maycondouglascc/glance"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-zinc-900 dark:text-zinc-100 font-medium hover:underline"
-          >
-            {t('footer.github')}
-          </a>
-        </li>
-        <li>
-          <a
-            href="https://linkedin.com/in/maycondouglascc"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-zinc-900 dark:text-zinc-100 font-medium hover:underline"
-          >
-            {t('footer.linkedin')}
-          </a>
-        </li>
+
         <li>
           <a
             href="https://github.com/maycondouglascc/glance/blob/main/LICENSE"

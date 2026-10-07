@@ -51,10 +51,12 @@ esac
 if [ "$(id -u)" -eq 0 ]; then
     BIN_DIR="/usr/local/bin"
     APP_DIR="/usr/local/share/applications"
+    ICON_DIR="/usr/local/share/icons/hicolor/scalable/apps"
     META_DIR="/usr/local/share/metainfo"
 else
     BIN_DIR="${HOME}/.local/bin"
     APP_DIR="${HOME}/.local/share/applications"
+    ICON_DIR="${HOME}/.local/share/icons/hicolor/scalable/apps"
     META_DIR="${HOME}/.local/share/metainfo"
 fi
 
@@ -62,15 +64,19 @@ if [ "$1" = "--uninstall" ] || [ "$1" = "uninstall" ]; then
     info "Uninstalling Glance..."
     rm -f "${BIN_DIR}/glance" "${BIN_DIR}/glance-tree"
     rm -f "${APP_DIR}/io.github.maycon.Glance.desktop"
+    rm -f "${ICON_DIR}/io.github.maycon.Glance.svg" "${ICON_DIR}/glance.svg"
     rm -f "${META_DIR}/io.github.maycon.Glance.metainfo.xml"
     if command -v update-desktop-database >/dev/null 2>&1; then
         update-desktop-database "$APP_DIR" >/dev/null 2>&1 || true
+    fi
+    if command -v gtk-update-icon-cache >/dev/null 2>&1; then
+        gtk-update-icon-cache -q -f -t "${ICON_DIR%/*/*}" >/dev/null 2>&1 || true
     fi
     success "Glance has been uninstalled successfully from ${BIN_DIR}."
     exit 0
 fi
 
-mkdir -p "$BIN_DIR" "$APP_DIR" "$META_DIR"
+mkdir -p "$BIN_DIR" "$APP_DIR" "$ICON_DIR" "$META_DIR"
 
 # 4. Check for downloader (curl or wget)
 if command -v curl >/dev/null 2>&1; then
@@ -110,6 +116,10 @@ if curl -sLf "$DOWNLOAD_URL" -o "${TMP_DIR}/${TARBALL_NAME}" 2>/dev/null || wget
     if [ -f "${TMP_DIR}/io.github.maycon.Glance.desktop" ]; then
         install -m 644 "${TMP_DIR}/io.github.maycon.Glance.desktop" "${APP_DIR}/io.github.maycon.Glance.desktop"
     fi
+    if [ -f "${TMP_DIR}/io.github.maycon.Glance.svg" ]; then
+        install -m 644 "${TMP_DIR}/io.github.maycon.Glance.svg" "${ICON_DIR}/io.github.maycon.Glance.svg"
+        cp -f "${ICON_DIR}/io.github.maycon.Glance.svg" "${ICON_DIR}/glance.svg"
+    fi
     if [ -f "${TMP_DIR}/io.github.maycon.Glance.metainfo.xml" ]; then
         install -m 644 "${TMP_DIR}/io.github.maycon.Glance.metainfo.xml" "${META_DIR}/io.github.maycon.Glance.metainfo.xml"
     fi
@@ -122,6 +132,10 @@ else
         install -m 755 "${TMP_DIR}/repo/target/release/glance" "${BIN_DIR}/glance"
         install -m 755 "${TMP_DIR}/repo/target/release/glance-tree" "${BIN_DIR}/glance-tree"
         install -m 644 "${TMP_DIR}/repo/data/io.github.maycon.Glance.desktop" "${APP_DIR}/io.github.maycon.Glance.desktop"
+        if [ -f "${TMP_DIR}/repo/data/icons/hicolor/scalable/apps/io.github.maycon.Glance.svg" ]; then
+            install -m 644 "${TMP_DIR}/repo/data/icons/hicolor/scalable/apps/io.github.maycon.Glance.svg" "${ICON_DIR}/io.github.maycon.Glance.svg"
+            cp -f "${ICON_DIR}/io.github.maycon.Glance.svg" "${ICON_DIR}/glance.svg"
+        fi
         install -m 644 "${TMP_DIR}/repo/data/io.github.maycon.Glance.metainfo.xml" "${META_DIR}/io.github.maycon.Glance.metainfo.xml"
     else
         error "Could not download ${DOWNLOAD_URL} and Cargo is not installed to compile from source."
@@ -130,6 +144,9 @@ fi
 
 if command -v update-desktop-database >/dev/null 2>&1; then
     update-desktop-database "$APP_DIR" >/dev/null 2>&1 || true
+fi
+if command -v gtk-update-icon-cache >/dev/null 2>&1; then
+    gtk-update-icon-cache -q -f -t "${ICON_DIR%/*/*}" >/dev/null 2>&1 || true
 fi
 
 success "Glance successfully installed to ${BIN_DIR}/glance"

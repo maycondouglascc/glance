@@ -17,6 +17,7 @@ package() {
     install -Dm755 glance "$pkgdir/usr/bin/glance"
     install -Dm755 glance-tree "$pkgdir/usr/bin/glance-tree"
     install -Dm644 io.github.maycon.Glance.desktop "$pkgdir/usr/share/applications/io.github.maycon.Glance.desktop"
+    install -Dm644 io.github.maycon.Glance.svg "$pkgdir/usr/share/icons/hicolor/scalable/apps/io.github.maycon.Glance.svg"
     install -Dm644 io.github.maycon.Glance.metainfo.xml "$pkgdir/usr/share/metainfo/io.github.maycon.Glance.metainfo.xml"
     install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
 }
