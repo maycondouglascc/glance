@@ -36,13 +36,31 @@ glance/
     └── glance/           # GTK4 + libadwaita desktop utility
 ```
 
-## Quick Start
+## Installation
 
-### Build & Run GUI
+### Universal One-Line Installer (Linux)
+
+Install the latest release directly to `~/.local/bin`:
 
 ```bash
-make release
-~/.local/bin/glance
+curl -fsSL https://raw.githubusercontent.com/maycondouglascc/glance/main/install.sh | sh
+```
+
+### Ubuntu / Debian (.deb)
+
+Download and install the native Debian package from [Releases](https://github.com/maycondouglascc/glance/releases):
+
+```bash
+gh release download --repo maycondouglascc/glance --pattern "*.deb"
+sudo apt install ./glance_*_amd64.deb
+```
+
+### Build from Source
+
+```bash
+git clone https://github.com/maycondouglascc/glance.git
+cd glance
+make install
 ```
 
 Or run via Cargo:

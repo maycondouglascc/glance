@@ -1,0 +1,96 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-4-dev libadwaita-1-dev dpkg-dev
+
+      - name: Set up Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@v2
+
+      - name: Build release binaries
+        run: cargo build --release
+
+      - name: Determine version
+        id: get_version
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            VERSION="${GITHUB_REF#refs/tags/v}"
+          else
+            VERSION=$(grep -m1 '^version' Cargo.toml | awk -F '"' '{print $2}')
+          fi
+          echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Package tarball
+        run: |
+          VERSION="${{ steps.get_version.outputs.VERSION }}"
+          STAGING="dist/glance-linux-x86_64"
+          mkdir -p "$STAGING"
+          cp target/release/glance "$STAGING/"
+          cp target/release/glance-tree "$STAGING/"
+          cp data/io.github.maycon.Glance.desktop "$STAGING/"
+          cp data/io.github.maycon.Glance.metainfo.xml "$STAGING/"
+          cp README.md "$STAGING/"
+          cp LICENSE "$STAGING/"
+          tar -czvf "glance-linux-x86_64.tar.gz" -C "$STAGING" .
+          sha256sum "glance-linux-x86_64.tar.gz" > "glance-linux-x86_64.tar.gz.sha256"
+
+      - name: Package Debian (.deb)
+        run: |
+          VERSION="${{ steps.get_version.outputs.VERSION }}"
+          DEB_DIR="dist/deb"
+          mkdir -p "$DEB_DIR/DEBIAN"
+          mkdir -p "$DEB_DIR/usr/bin"
+          mkdir -p "$DEB_DIR/usr/share/applications"
+          mkdir -p "$DEB_DIR/usr/share/metainfo"
+
+          cp target/release/glance "$DEB_DIR/usr/bin/"
+          cp target/release/glance-tree "$DEB_DIR/usr/bin/"
+          cp data/io.github.maycon.Glance.desktop "$DEB_DIR/usr/share/applications/"
+          cp data/io.github.maycon.Glance.metainfo.xml "$DEB_DIR/usr/share/metainfo/"
+
+          cat <<EOF > "$DEB_DIR/DEBIAN/control"
+Package: glance
+Version: ${VERSION}
+Section: utils
+Priority: optional
+Architecture: amd64
+Depends: libc6, libgtk-4-1, libadwaita-1-0
+Maintainer: Maycon Douglas <hellomaycondouglas@gmail.com>
+Homepage: https://github.com/maycondouglascc/glance
+Description: Lightweight application and process monitor for Linux
+ Glance provides a real-time, grouped view of running Linux applications
+ and processes using systemd cgroup scopes and progressive disclosure.
+EOF
+
+          dpkg-deb --build "$DEB_DIR" "glance_${VERSION}_amd64.deb"
+          sha256sum "glance_${VERSION}_amd64.deb" > "glance_${VERSION}_amd64.deb.sha256"
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            glance-linux-x86_64.tar.gz
+            glance-linux-x86_64.tar.gz.sha256
+            glance_*_amd64.deb
+            glance_*_amd64.deb.sha256
+          generate_release_notes: true
