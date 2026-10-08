@@ -164,6 +164,21 @@ if command -v gtk-update-icon-cache >/dev/null 2>&1; then
 fi
 
 success "Glance successfully installed!"
+
+# Anonymous installation telemetry ping (respects DO_NOT_TRACK=1 and GLANCE_NO_TELEMETRY=1)
+if [ -z "$DO_NOT_TRACK" ] && [ -z "$GLANCE_NO_TELEMETRY" ]; then
+    if command -v curl >/dev/null 2>&1; then
+        (curl -fsSL -X POST "https://www.maycondouglas.work/api/glance-telemetry" \
+            -H "Content-Type: application/json" \
+            -d "{\"version\":\"${LATEST_TAG}\",\"arch\":\"${TARGET_ARCH}\",\"os\":\"${OS}\",\"method\":\"script\"}" \
+            --max-time 3 >/dev/null 2>&1 || true) &
+    elif command -v wget >/dev/null 2>&1; then
+        (wget -q -O- --post-data="{\"version\":\"${LATEST_TAG}\",\"arch\":\"${TARGET_ARCH}\",\"os\":\"${OS}\",\"method\":\"script\"}" \
+            --header="Content-Type: application/json" \
+            --timeout=3 "https://www.maycondouglas.work/api/glance-telemetry" >/dev/null 2>&1 || true) &
+    fi
+fi
+
 printf "\n${GREEN}==>${NC} ${BOLD}Launch from your Desktop:${NC}\n"
 printf "  • Press ${BOLD}Super${NC} (Windows key) and type ${BOLD}Glance${NC} to launch\n"
 printf "  • Or click Glance in your application menu / dock\n"

@@ -5,6 +5,7 @@
 # Glance
 
 [![Release](https://img.shields.io/github/v/release/maycondouglascc/glance?color=blue&label=release)](https://github.com/maycondouglascc/glance/releases)
+[![Downloads](https://img.shields.io/github/downloads/maycondouglascc/glance/total.svg?label=downloads&color=blue)](https://github.com/maycondouglascc/glance/releases)
 [![Build Status](https://github.com/maycondouglascc/glance/actions/workflows/release.yml/badge.svg)](https://github.com/maycondouglascc/glance/actions/workflows/release.yml)
 [![Website](https://img.shields.io/badge/website-maycondouglas.work%2Fglance-blue.svg)](https://www.maycondouglas.work/glance)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)

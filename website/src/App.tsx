@@ -174,7 +174,14 @@ function MainContent() {
                       <button
                         key={tab}
                         type="button"
-                        onClick={() => setActiveTab(tab)}
+                        onClick={() => {
+                          setActiveTab(tab)
+                          if (typeof window !== 'undefined' && typeof (window as any).gtag === 'function') {
+                            (window as any).gtag('event', 'select_install_tab', {
+                              tab_name: tab,
+                            })
+                          }
+                        }}
                         className={`rounded-md px-3 py-1.5 text-caption-12-regular font-medium transition-colors duration-150 ${
                           activeTab === tab
                             ? 'bg-white text-zinc-900 shadow-xs dark:bg-zinc-800 dark:text-zinc-100'
@@ -192,7 +199,7 @@ function MainContent() {
                       <span className="text-caption-12-regular text-zinc-500 dark:text-zinc-400">
                         {installCommands[activeTab].desc}
                       </span>
-                      <CopyButton text={installCommands[activeTab].cmd} />
+                      <CopyButton text={installCommands[activeTab].cmd} eventLabel={`install_${activeTab}`} />
                     </div>
                     <pre className="overflow-x-auto rounded bg-white p-3 font-mono text-caption-12-regular text-zinc-900 dark:bg-zinc-900 dark:text-zinc-100">
                       <code>{installCommands[activeTab].cmd}</code>

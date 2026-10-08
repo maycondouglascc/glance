@@ -3,15 +3,22 @@ import { useState } from 'react'
 interface CopyButtonProps {
   text: string
   className?: string
+  eventLabel?: string
 }
 
-export function CopyButton({ text, className = '' }: CopyButtonProps) {
+export function CopyButton({ text, className = '', eventLabel = 'command' }: CopyButtonProps) {
   const [copied, setCopied] = useState(false)
 
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(text)
       setCopied(true)
+      if (typeof window !== 'undefined' && typeof (window as any).gtag === 'function') {
+        (window as any).gtag('event', 'copy_install_command', {
+          command_type: eventLabel,
+          command_snippet: text.slice(0, 60),
+        })
+      }
       setTimeout(() => setCopied(false), 2000)
     } catch {
       // fallback
