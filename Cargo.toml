@@ -7,6 +7,8 @@ version = "0.1.1"
 edition = "2024"
 license = "GPL-3.0-or-later"
 rust-version = "1.85"
+homepage = "https://www.maycondouglas.work/glance"
+repository = "https://github.com/maycondouglascc/glance"
 
 [workspace.dependencies]
 rustix = { version = "1.1", features = ["fs", "process", "event", "param", "std"] }

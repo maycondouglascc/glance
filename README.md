@@ -6,7 +6,7 @@
 
 [![Release](https://img.shields.io/github/v/release/maycondouglascc/glance?color=blue&label=release)](https://github.com/maycondouglascc/glance/releases)
 [![Build Status](https://github.com/maycondouglascc/glance/actions/workflows/release.yml/badge.svg)](https://github.com/maycondouglascc/glance/actions/workflows/release.yml)
-[![Website](https://img.shields.io/badge/website-maycondouglascc.github.io%2Fglance-blue.svg)](https://maycondouglascc.github.io/glance)
+[![Website](https://img.shields.io/badge/website-maycondouglas.work%2Fglance-blue.svg)](https://www.maycondouglas.work/glance)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Rust](https://img.shields.io/badge/rust-1.85%2B-orange.svg)](https://www.rust-lang.org)
 [![GTK4](https://img.shields.io/badge/GTK-4.14%2B-green.svg)](https://gtk.org)
@@ -14,7 +14,7 @@
 
 A lightweight, high-performance Linux desktop application and process monitor designed for Linux desktops (GNOME, COSMIC, KDE Plasma, etc.). Glance provides a real-time, grouped view of running applications and their underlying processes using systemd cgroup scopes and progressive disclosure.
 
-Visit the [Glance Landing Page](https://maycondouglascc.github.io/glance) to learn more.
+Visit the [Glance Landing Page](https://www.maycondouglas.work/glance) to learn more.
 
 ---
 

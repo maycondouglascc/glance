@@ -221,40 +221,10 @@ function MainContent() {
                 </section>
               </TransitionChild>
 
-              {/* SECTION 3: ABOUT THE CREATOR */}
-              <TransitionChild index={3}>
-                <section className="flex flex-col gap-4">
-                  <h2 className="text-body-15-medium font-medium text-zinc-900 dark:text-zinc-100">
-                    {t('author.title')}
-                  </h2>
-
-                  <div className="flex items-start gap-4">
-                    <img
-                      src="./profilepic.webp"
-                      alt="Maycon Douglas"
-                      className="h-14 w-14 rounded-full object-cover ring-1 ring-zinc-200 dark:ring-zinc-800 shrink-0"
-                    />
-                    <div className="flex flex-col gap-2">
-                      <p className="text-body-14-regular text-zinc-600 dark:text-zinc-400">
-                        {t('author.bio')}
-                      </p>
-                      <a
-                        href="https://maycondouglas.work"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-body-14-medium font-medium text-accent hover:underline dark:text-accent"
-                      >
-                        {t('author.portfolioLink')}
-                      </a>
-                    </div>
-                  </div>
-                </section>
-              </TransitionChild>
-
             </main>
 
             {/* FOOTER */}
-            <TransitionChild index={4}>
+            <TransitionChild index={3}>
               <Footer />
             </TransitionChild>
           </div>
