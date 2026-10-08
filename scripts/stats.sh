@@ -71,7 +71,7 @@ echo ""
 # 2. Fetch Terminal Script Telemetry
 echo -e "${BOLD}⚡ Script Installations (install.sh):${NC}"
 echo -e "------------------------------------------------------"
-TELEMETRY_RESP=$(curl -sSL --max-time 3 "$TELEMETRY_URL" 2>/dev/null || echo "{}")
+TELEMETRY_RESP=$(curl -sSL --max-time 3 "${TELEMETRY_URL}?no_cache=1" 2>/dev/null || echo "{}")
 
 if command -v jq >/dev/null 2>&1 && [ "$TELEMETRY_RESP" != "{}" ]; then
     SCRIPT_TOTAL=$(echo "$TELEMETRY_RESP" | jq -r '.scriptInstalls.totalScriptInstalls // .totalScriptInstalls // 0' 2>/dev/null || echo 0)
