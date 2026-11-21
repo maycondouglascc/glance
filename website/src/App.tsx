@@ -1,246 +1,267 @@
-import { useState } from 'react'
-import Wrapper from './components/Wrapper'
-import SettingsBar from './components/SettingsBar'
-import { TransitionChild } from './components/PageTransition'
-import { GlanceInteractiveDemo } from './components/GlanceInteractiveDemo'
-import { CopyButton } from './components/CopyButton'
-import Footer from './components/Footer'
-import { ThemeProvider } from './context/ThemeContext'
-import { LanguageProvider, useLanguage } from './context/LanguageContext'
+import { useEffect, useRef, useState } from "react";
+import { LanguageProvider, useLanguage } from "./context/LanguageContext";
+import { ThemeProvider } from "./context/ThemeContext";
+import { copy, methods, site } from "./data/site";
+import { GlanceInteractiveDemo } from "./components/GlanceInteractiveDemo";
+import { usePageMotion } from "./motion/usePageMotion";
 
-type InstallTab = 'curl' | 'deb' | 'aur' | 'cargo'
-
-function MainContent() {
-  const { t } = useLanguage()
-  const [activeTab, setActiveTab] = useState<InstallTab>('curl')
-
-  const installCommands: Record<InstallTab, { label: string; cmd: string; desc: string }> = {
-    curl: {
-      label: t('install.tabCurl'),
-      cmd: 'curl -fsSL https://raw.githubusercontent.com/maycondouglascc/glance/main/install.sh | sh',
-      desc: 'Detects system arch, installs glance, glance-tree, and desktop entry to ~/.local/bin.',
-    },
-    deb: {
-      label: t('install.tabDeb'),
-      cmd: 'curl -LO https://github.com/maycondouglascc/glance/releases/latest/download/glance_0.1.1_amd64.deb && sudo apt install ./glance_0.1.1_amd64.deb',
-      desc: 'Native package for Ubuntu 24.04+, Debian 13, Linux Mint, and derivatives.',
-    },
-    aur: {
-      label: t('install.tabAur'),
-      cmd: 'git clone https://github.com/maycondouglascc/glance.git && cd glance/packaging/aur && makepkg -si',
-      desc: 'Arch Linux PKGBUILD build script for pacman / AUR helpers.',
-    },
-    cargo: {
-      label: t('install.tabCargo'),
-      cmd: 'cargo install --git https://github.com/maycondouglascc/glance.git glance',
-      desc: 'Compiles and installs the latest binary using Rust toolchain.',
-    },
+function Arrow() {
+  return (
+    <span className="arrow" aria-hidden="true">
+      ↗
+    </span>
+  );
+}
+function DownloadIcon() {
+  return (
+    <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 3v12m-4-4 4 4 4-4M4 17v3h16v-3" />
+    </svg>
+  );
+}
+function Installation({ guide = false }: { guide?: boolean }) {
+  const { language } = useLanguage();
+  const c = copy[language];
+  const [method, setMethod] = useState(0);
+  const [status, setStatus] = useState<"idle" | "copied" | "failed">("idle");
+  const timer = useRef<ReturnType<typeof setTimeout>>();
+  useEffect(() => () => clearTimeout(timer.current), []);
+  async function copyCommand() {
+    clearTimeout(timer.current);
+    try {
+      await navigator.clipboard.writeText(methods[method]);
+      setStatus("copied");
+    } catch {
+      setStatus("failed");
+    }
+    timer.current = setTimeout(() => setStatus("idle"), 3000);
   }
-
-  const features = [
-    {
-      title: t('value.groupingTitle'),
-      description: t('value.groupingDesc'),
-    },
-    {
-      title: t('value.efficiencyTitle'),
-      description: t('value.efficiencyDesc'),
-    },
-    {
-      title: t('value.safetyTitle'),
-      description: t('value.safetyDesc'),
-    },
-    {
-      title: t('value.disclosureTitle'),
-      description: t('value.disclosureDesc'),
-    },
-  ]
-
+  return (
+    <section
+      className="installation section-grid"
+      id="install"
+      aria-labelledby="install-title"
+    >
+      <div className="install-intro">
+        <h2 id="install-title">{c.installTitle}</h2>
+        <p>{c.installText}</p>
+      </div>
+      <div className="install-workbench">
+        <div className="install-methods" role="group" aria-label={c.guide}>
+          {c.methods.map((label, i) => (
+            <button
+              key={label}
+              aria-pressed={method === i}
+              onClick={() => {
+                setMethod(i);
+                setStatus("idle");
+                clearTimeout(timer.current);
+              }}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+        <div className="command-box">
+          <div className="command-header">
+            <span>~/glance</span>
+            <button onClick={copyCommand}>
+              {status === "copied" ? "✓ " + c.copied : c.copy}
+              <span aria-hidden="true"> ⧉</span>
+            </button>
+          </div>
+          <pre tabIndex={0}>
+            <code>{methods[method]}</code>
+          </pre>
+        </div>
+        {guide && <p className="command-description">
+          {c.descriptions[method]}{" "}
+          {method === 1 && <a href={site.releases}>GitHub Releases ↗</a>}
+        </p>}
+        <p role="status" className="copy-status">
+          {status === "copied" ? c.copied : status === "failed" ? c.failed : ""}
+        </p>
+        {guide && <><p className="launcher-tip">
+          <span className="keycap">Super</span>
+          {c.launcher}
+        </p>
+        <div className="terminal-tip">
+          <strong>{c.terminal}</strong>
+          <p>{c.terminalText}</p>
+        </div></>}
+      </div>
+    </section>
+  );
+}
+function MainContent() {
+  const { language } = useLanguage();
+  const c = copy[language];
+  const query = new URLSearchParams(window.location.search).get("page");
+  const path = window.location.pathname;
+  const page =
+    query === "guide" || path.endsWith("/guide.html")
+      ? "guide"
+      : query ||
+        (!path.endsWith("/") &&
+        !path.endsWith("/index.html") &&
+        !path.endsWith("/glance")
+          ? "404"
+          : "home");
+  usePageMotion(page + language);
+  useEffect(() => {
+    document.documentElement.lang = language === "pt" ? "pt-BR" : "en";
+    document.title =
+      page === "home"
+        ? "Glance | " + c.label
+        : (page === "guide" ? c.guide : "404") + " | Glance";
+    document
+      .querySelector('meta[name="description"]')
+      ?.setAttribute(
+        "content",
+        page === "guide"
+          ? c.guideText
+          : page === "home"
+            ? c.description
+            : c.notFoundText,
+      );
+    document
+      .querySelector('link[rel="canonical"]')
+      ?.setAttribute(
+        "href",
+        site.url + (page === "guide" ? "?page=guide" : ""),
+      );
+  }, [language, page, c]);
   return (
     <>
-      <div className="fixed right-3 top-3 z-40 sm:right-5 sm:top-5">
-        <SettingsBar />
-      </div>
-
-      <div className="px-1 py-1 sm:px-2 sm:py-2">
-        <Wrapper>
-          <div className="max-w-[600px] mx-auto">
-            <main id="main-content" className="flex flex-col gap-12">
-              
-              {/* SECTION 0: HERO & INTERACTIVE APP */}
-              <TransitionChild index={0}>
-                <section className="flex flex-col gap-8">
-                  {/* App Glyph & Version */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center ">
-                      <img
-                        src="./logo.svg"
-                        alt="Glance"
-                        className="h-14 w-14 shrink-0 object-contain drop-shadow-xs"
-                      />
-                      <div className="flex flex-col mb-1">
-                        <span className="text-body-15-medium font-medium text-zinc-900 dark:text-zinc-100">
-                          {t('intro.name')}
-                        </span>
-                       
-                      </div>
-                    </div>
-
-                    <a
-                      href="https://github.com/maycondouglascc/glance/releases/latest"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="rounded bg-zinc-100 px-2 py-0.5 font-mono text-caption-11-regular text-zinc-600 hover:text-zinc-900 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200 no-underline"
-                    >
-                      {t('intro.badge')}
+      <a className="skip-link" href="#main-content">
+        {c.skip}
+      </a>
+      <div className="site-shell">
+        <header className="header">
+          <a
+            className="wordmark"
+            href={import.meta.env.BASE_URL}
+            aria-label="Glance home"
+          >
+            <img
+              src={import.meta.env.BASE_URL + "logo.svg"}
+              alt=""
+              width="36"
+              height="36"
+            />
+            Glance<span className="brand-dot">.</span>
+          </a>
+        </header>
+        <main id="main-content" tabIndex={-1}>
+          {page === "home" ? (
+            <>
+              <section className="hero">
+                <div className="hero-copy">
+                  <h1 data-intro>
+                    {c.headline[0]}
+                    <br />
+                    <span>{c.headline[1]}</span>
+                  </h1>
+                  <p className="hero-description" data-intro>
+                    {c.description}
+                  </p>
+                  <div className="hero-action" data-intro>
+                    <a className="primary-button" href="#install">
+                      <img src={import.meta.env.BASE_URL + "icons/linux.svg"} alt="" width="20" height="20" />
+                      {c.cta}
+                      <DownloadIcon />
                     </a>
                   </div>
-
-                  {/* Title & Pitch */}
-                  <div className="flex flex-col gap-2">
-                    <h1 className="text-heading-28-medium font-semibold tracking-tight text-zinc-900 sm:text-heading-32-medium dark:text-zinc-100">
-                      {t('intro.title')}
-                    </h1>
-                    <p className="text-body-15-regular font-normal text-zinc-600 dark:text-zinc-400">
-                      {t('intro.description')}
-                    </p>
-                  </div>
-
-                  {/* Quick 1-click terminal install pill */}
-                  <div className="flex flex-col gap-1.5 rounded-xl bg-zinc-100/80 p-3 dark:bg-zinc-800/50 border border-zinc-200/60 dark:border-zinc-800/80">
-                    <div className="flex items-center justify-between">
-                      <span className="text-caption-11-regular font-mono text-zinc-500 dark:text-zinc-400">
-                        {t('intro.quickInstall')}
+                </div>
+                <div className="hero-demo" id="demo" data-intro>
+                  <GlanceInteractiveDemo />
+                </div>
+              </section>
+              <section
+                className="facts"
+                aria-label={
+                  language === "pt"
+                    ? "Características técnicas"
+                    : "Technical highlights"
+                }
+              >
+                <div>
+                  <strong>
+                    0<span>%</span>
+                  </strong>
+                  <p>{c.idle}</p>
+                </div>
+                <div>
+                  <strong>
+                    <span>~</span>65 <span>MB</span>
+                  </strong>
+                  <p>{c.memory}</p>
+                </div>
+                <div>
+                  <strong className="native-fact">
+                    GTK4 <span>+ Rust</span>
+                  </strong>
+                  <p>{c.native}</p>
+                </div>
+              </section>
+              <section className="explore section-grid" id="explore">
+                <h2 className="explore-title">{c.why}</h2>
+                <div className="explore-content">
+                  <p className="section-description">{c.whyText}</p>
+                  <div className="feature-index">
+                  {c.features.map(([title, description], i) => (
+                    <article key={title}>
+                      <span className="feature-symbol" aria-hidden="true">
+                        {["⊞", "⊙", "⌁"][i]}
                       </span>
-                      <CopyButton text="curl -fsSL https://raw.githubusercontent.com/maycondouglascc/glance/main/install.sh | sh" />
-                    </div>
-                    <code className="block overflow-x-auto font-mono text-caption-12-regular text-zinc-800 dark:text-zinc-200 select-all">
-                      curl -fsSL https://raw.githubusercontent.com/maycondouglascc/glance/main/install.sh | sh
-                    </code>
-                  </div>
-
-                  {/* INTERACTIVE GLANCE DEMO */}
-                  <div className="mt-2">
-                    <GlanceInteractiveDemo />
-                  </div>
-                </section>
-              </TransitionChild>
-
-              {/* SECTION 1: VALUE PROPOSITIONS */}
-              <TransitionChild index={1}>
-                <section className="flex flex-col gap-4">
-                  <div className="flex flex-col gap-1">
-                    <h2 className="text-body-15-medium font-medium text-zinc-900 dark:text-zinc-100">
-                      {t('value.title')}
-                    </h2>
-                    <p className="text-body-14-regular text-zinc-600 dark:text-zinc-400">
-                      {t('value.subtitle')}
-                    </p>
-                  </div>
-
-                  <div className="grid gap-4 sm:grid-cols-2 mt-2">
-                    {features.map((feature, i) => (
-                      <div
-                        key={i}
-                        className="flex flex-col gap-1.5 rounded-2xl bg-zinc-200/40 p-5 transition-colors duration-75 ease-in hover:bg-zinc-200/70 dark:bg-zinc-800/40 dark:hover:bg-zinc-800/70"
-                      >
-                        <h3 className="text-body-14-medium font-medium text-zinc-900 dark:text-zinc-100">
-                          {feature.title}
-                        </h3>
-                        <p className="text-caption-13-regular text-zinc-600 dark:text-zinc-400">
-                          {feature.description}
-                        </p>
+                      <div>
+                        <h3>{title}</h3>
+                        <p>{description}</p>
                       </div>
-                    ))}
+                    </article>
+                  ))}
                   </div>
-                </section>
-              </TransitionChild>
-
-              {/* SECTION 2: GET STARTED / INSTALLATION */}
-              <TransitionChild index={2}>
-                <section className="flex flex-col gap-4">
-                  <div className="flex flex-col gap-1">
-                    <h2 className="text-body-15-medium font-medium text-zinc-900 dark:text-zinc-100">
-                      {t('install.title')}
-                    </h2>
-                    <p className="text-body-14-regular text-zinc-600 dark:text-zinc-400">
-                      {t('install.subtitle')}
-                    </p>
-                  </div>
-
-                  {/* Segmented radio tabs */}
-                  <div className="mt-2 flex flex-wrap gap-1 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800/60 border border-zinc-200/60 dark:border-zinc-800/80">
-                    {(Object.keys(installCommands) as InstallTab[]).map((tab) => (
-                      <button
-                        key={tab}
-                        type="button"
-                        onClick={() => {
-                          setActiveTab(tab)
-                          if (typeof window !== 'undefined' && typeof (window as any).gtag === 'function') {
-                            (window as any).gtag('event', 'select_install_tab', {
-                              tab_name: tab,
-                            })
-                          }
-                        }}
-                        className={`rounded-md px-3 py-1.5 text-caption-12-regular font-medium transition-colors duration-150 ${
-                          activeTab === tab
-                            ? 'bg-white text-zinc-900 shadow-xs dark:bg-zinc-800 dark:text-zinc-100'
-                            : 'text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100'
-                        }`}
-                      >
-                        {installCommands[tab].label}
-                      </button>
-                    ))}
-                  </div>
-
-                  {/* Command box */}
-                  <div className="flex flex-col gap-2 rounded-2xl bg-zinc-200/40 p-5 dark:bg-zinc-800/40">
-                    <div className="flex items-center justify-between">
-                      <span className="text-caption-12-regular text-zinc-500 dark:text-zinc-400">
-                        {installCommands[activeTab].desc}
-                      </span>
-                      <CopyButton text={installCommands[activeTab].cmd} eventLabel={`install_${activeTab}`} />
-                    </div>
-                    <pre className="overflow-x-auto rounded bg-white p-3 font-mono text-caption-12-regular text-zinc-900 dark:bg-zinc-900 dark:text-zinc-100">
-                      <code>{installCommands[activeTab].cmd}</code>
-                    </pre>
-                  </div>
-
-                  {/* Desktop Launcher Tip */}
-                  <div className="rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900 shadow-xs">
-                    <p className="text-caption-13-regular text-zinc-600 dark:text-zinc-400">
-                      <strong className="font-medium text-zinc-900 dark:text-zinc-100">
-                        {t('install.desktopTipTitle')}{' '}
-                      </strong>
-                      {t('install.desktopTipText')}
-                    </p>
-                  </div>
-
-                  {/* CLI Tip */}
-                  <div className="rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900 shadow-xs">
-                    <p className="text-caption-13-regular text-zinc-600 dark:text-zinc-400">
-                      <strong className="font-medium text-zinc-900 dark:text-zinc-100">
-                        {t('install.cliHintTitle')}{' '}
-                      </strong>
-                      {t('install.cliHintText')}
-                    </p>
-                  </div>
-                </section>
-              </TransitionChild>
-
-            </main>
-
-            {/* FOOTER */}
-            <TransitionChild index={3}>
-              <Footer />
-            </TransitionChild>
+                </div>
+              </section>
+              <Installation />
+            </>
+          ) : page === "guide" ? (
+            <>
+              <section className="inner-hero">
+                <p>Glance / {c.guide}</p>
+                <h1>{c.guideTitle}</h1>
+                <p>{c.guideText}</p>
+              </section>
+              <Installation guide />
+            </>
+          ) : (
+            <section className="not-found">
+              <span className="error-code">404</span>
+              <h1>{c.notFound}</h1>
+              <p>{c.notFoundText}</p>
+              <a className="primary-button" href={import.meta.env.BASE_URL}>
+                {c.home}
+                <Arrow />
+              </a>
+            </section>
+          )}
+        </main>
+        <footer>
+          <div className="footer-top">
+            <p>{c.footer}</p>
+            <a className="text-link" href={site.github}>
+              GitHub
+              <Arrow />
+            </a>
           </div>
-        </Wrapper>
+          <div className="footer-wordmark" aria-hidden="true">
+            <img src={import.meta.env.BASE_URL + "logo.svg"} alt="" width="56" height="56" />
+          </div>
+        </footer>
       </div>
     </>
-  )
+  );
 }
-
 export default function App() {
   return (
     <LanguageProvider>
@@ -248,5 +269,5 @@ export default function App() {
         <MainContent />
       </ThemeProvider>
     </LanguageProvider>
-  )
+  );
 }

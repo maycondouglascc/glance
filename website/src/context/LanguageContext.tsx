@@ -28,13 +28,6 @@ type LanguageContextValue = {
 
 const LanguageContext = createContext<LanguageContextValue | undefined>(undefined)
 
-function getStoredOrDefaultLanguage(): Language {
-  if (typeof window === 'undefined') return 'en'
-  const stored = window.localStorage.getItem(STORAGE_KEY)
-  if (stored === 'en' || stored === 'pt') return stored
-  return window.navigator.language.toLowerCase().startsWith('pt') ? 'pt' : 'en'
-}
-
 function getByPath(obj: unknown, path: string): unknown {
   if (!obj || typeof obj !== 'object') return undefined
   return path.split('.').reduce<unknown>((acc, segment) => {
@@ -49,7 +42,7 @@ function interpolate(template: string, params?: Record<string, string | number>)
 }
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguageState] = useState<Language>(getStoredOrDefaultLanguage)
+  const [language, setLanguageState] = useState<Language>('en')
 
   const setLanguage = useCallback((value: Language) => {
     setLanguageState(value)

@@ -8,3 +8,8 @@ website/dist/
 figma_node.json
 glance-layout.html
 glance-layout.svg
+website/.shots/
+website/.qa/
+website/.shots-audit.txt
+
+website/.shots-final/

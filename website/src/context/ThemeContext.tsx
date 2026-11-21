@@ -11,8 +11,8 @@ interface ThemeContextValue {
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined)
 
 const STORAGE_KEY = 'glance-theme'
-const DARK_BG = '#09090b'
-const LIGHT_BG = '#ffffff'
+const DARK_BG = '#18181b'
+const LIGHT_BG = '#f0f0f0'
 
 function getSystemPreference(): 'light' | 'dark' {
   if (typeof window === 'undefined') return 'dark'
@@ -40,12 +40,7 @@ function applyTheme(resolved: 'light' | 'dark') {
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>(() => {
-    if (typeof window === 'undefined') return 'system'
-    const stored = localStorage.getItem(STORAGE_KEY)
-    if (stored === 'light' || stored === 'dark' || stored === 'system') return stored as Theme
-    return 'system'
-  })
+  const [theme, setThemeState] = useState<Theme>('system')
 
   const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>(() => resolveTheme(theme))
 
